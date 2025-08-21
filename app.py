@@ -4,8 +4,7 @@ import streamlit as st
 st.set_page_config(
     page_title="Biblical Research Tool",
     page_icon="📖",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 def get_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
@@ -157,38 +156,18 @@ def main():
     # Get API key from secrets
     try:
         claude_api_key = st.secrets["CLAUDE_API_KEY"]
-        api_key_status = "✅ Connected"
     except KeyError:
         claude_api_key = None
-        api_key_status = "❌ API Key not found in secrets"
+        st.error("⚠️ API Key not found in secrets. Please add CLAUDE_API_KEY to your Streamlit app settings.")
+        st.stop()
     
-    # Sidebar for configuration
-    with st.sidebar:
-        st.header("⚙️ Configuration")
+    # Main interface - single column layout with more space
+    st.header("Research Options")
         
-        # API Key status
-        st.write("**Claude API Status:**")
-        st.write(api_key_status)
-        
-        if not claude_api_key:
-            st.error("Please add CLAUDE_API_KEY to your Streamlit secrets.")
-        
-        st.divider()
-        
-        # Theological framework info
-        st.info("""
-        **Theological Framework:**
-        - Southern Baptist Faith and Message
-        - Conservative, scripturally sound
-        - Vetted theological resources
-        """)
-    
-    # Main interface
+    # Create two columns for better layout
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.header("Research Options")
-        
         # Research type selection
         research_type = st.selectbox(
             "Select Research Type:",
@@ -236,7 +215,7 @@ def main():
         
         # Generate button
         if st.button("🔍 Generate Research", type="primary"):
-            if user_input and claude_api_key:
+            if user_input:
                 with st.spinner("Generating biblical research..."):
                     try:
                         # Get the appropriate prompt
@@ -254,10 +233,7 @@ def main():
                     except Exception as e:
                         st.error(f"Error generating research: {str(e)}")
             else:
-                if not user_input:
-                    st.warning("Please enter your research topic or verse.")
-                if not claude_api_key:
-                    st.warning("API key not found in secrets. Please configure CLAUDE_API_KEY in your Streamlit app settings.")
+                st.warning("Please enter your research topic or verse.")
     
     with col2:
         st.header("Research Results")
