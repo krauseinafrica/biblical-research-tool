@@ -1,0 +1,520 @@
+{
+  "elohim": {
+    "strong": "H430",
+    "meaning": "God, gods, divine beings, mighty ones",
+    "english_words": ["God", "god", "gods"],
+    "part_of_speech": "noun",
+    "transliteration": "elohim"
+  },
+  "yahweh": {
+    "strong": "H3068",
+    "meaning": "LORD, the proper name of God",
+    "english_words": ["LORD", "Jehovah"],
+    "part_of_speech": "proper noun",
+    "transliteration": "YHWH"
+  },
+  "adonai": {
+    "strong": "H136",
+    "meaning": "Lord, master, owner",
+    "english_words": ["Lord", "lord", "master"],
+    "part_of_speech": "noun",
+    "transliteration": "adonai"
+  },
+  "bara": {
+    "strong": "H1254",
+    "meaning": "to create, shape, form",
+    "english_words": ["create", "created", "creation"],
+    "part_of_speech": "verb",
+    "transliteration": "bara"
+  },
+  "yatsar": {
+    "strong": "H3335",
+    "meaning": "to form, fashion, shape",
+    "english_words": ["form", "formed", "fashion", "create"],
+    "part_of_speech": "verb",
+    "transliteration": "yatsar"
+  },
+  "asah": {
+    "strong": "H6213",
+    "meaning": "to do, make, accomplish",
+    "english_words": ["make", "do", "made", "done", "work"],
+    "part_of_speech": "verb",
+    "transliteration": "asah"
+  },
+  "ahab": {
+    "strong": "H157",
+    "meaning": "to love, like, be fond of",
+    "english_words": ["love", "loved", "beloved"],
+    "part_of_speech": "verb",
+    "transliteration": "ahab"
+  },
+  "ahavah": {
+    "strong": "H160",
+    "meaning": "love, affection",
+    "english_words": ["love"],
+    "part_of_speech": "noun",
+    "transliteration": "ahavah"
+  },
+  "emunah": {
+    "strong": "H530",
+    "meaning": "firmness, faithfulness, truth",
+    "english_words": ["faith", "faithfulness", "truth"],
+    "part_of_speech": "noun",
+    "transliteration": "emunah"
+  },
+  "aman": {
+    "strong": "H539",
+    "meaning": "to confirm, support, be faithful",
+    "english_words": ["believe", "faithful", "trust"],
+    "part_of_speech": "verb",
+    "transliteration": "aman"
+  },
+  "ruach": {
+    "strong": "H7307",
+    "meaning": "breath, wind, spirit",
+    "english_words": ["spirit", "Spirit", "wind", "breath"],
+    "part_of_speech": "noun",
+    "transliteration": "ruach"
+  },
+  "davar": {
+    "strong": "H1697",
+    "meaning": "word, matter, thing, affair",
+    "english_words": ["word", "thing", "matter"],
+    "part_of_speech": "noun",
+    "transliteration": "davar"
+  },
+  "torah": {
+    "strong": "H8451",
+    "meaning": "law, instruction, teaching",
+    "english_words": ["law", "instruction"],
+    "part_of_speech": "noun",
+    "transliteration": "torah"
+  },
+  "tsedaqah": {
+    "strong": "H6666",
+    "meaning": "righteousness, righteous acts",
+    "english_words": ["righteousness", "righteous"],
+    "part_of_speech": "noun",
+    "transliteration": "tsedaqah"
+  },
+  "tsaddiq": {
+    "strong": "H6662",
+    "meaning": "just, righteous",
+    "english_words": ["righteous", "just"],
+    "part_of_speech": "adjective",
+    "transliteration": "tsaddiq"
+  },
+  "qadosh": {
+    "strong": "H6918",
+    "meaning": "holy, sacred, set apart",
+    "english_words": ["holy", "saint"],
+    "part_of_speech": "adjective",
+    "transliteration": "qadosh"
+  },
+  "qodesh": {
+    "strong": "H6944",
+    "meaning": "holiness, sacredness, apartness",
+    "english_words": ["holiness", "holy"],
+    "part_of_speech": "noun",
+    "transliteration": "qodesh"
+  },
+  "chesed": {
+    "strong": "H2617",
+    "meaning": "lovingkindness, mercy, faithfulness",
+    "english_words": ["mercy", "kindness", "lovingkindness"],
+    "part_of_speech": "noun",
+    "transliteration": "chesed"
+  },
+  "racham": {
+    "strong": "H7355",
+    "meaning": "to love, have compassion, mercy",
+    "english_words": ["mercy", "compassion", "pity"],
+    "part_of_speech": "verb",
+    "transliteration": "racham"
+  },
+  "shalom": {
+    "strong": "H7965",
+    "meaning": "peace, completeness, welfare",
+    "english_words": ["peace", "peaceable"],
+    "part_of_speech": "noun",
+    "transliteration": "shalom"
+  },
+  "kabod": {
+    "strong": "H3519",
+    "meaning": "glory, honor, abundance",
+    "english_words": ["glory", "glorious", "honor"],
+    "part_of_speech": "noun",
+    "transliteration": "kabod"
+  },
+  "emet": {
+    "strong": "H571",
+    "meaning": "firmness, faithfulness, truth",
+    "english_words": ["truth", "true", "faithful"],
+    "part_of_speech": "noun",
+    "transliteration": "emet"
+  },
+  "yeshuah": {
+    "strong": "H3444",
+    "meaning": "salvation, deliverance, help",
+    "english_words": ["salvation", "deliverance"],
+    "part_of_speech": "noun",
+    "transliteration": "yeshuah"
+  },
+  "yasha": {
+    "strong": "H3467",
+    "meaning": "to save, deliver, help",
+    "english_words": ["save", "saved", "deliver"],
+    "part_of_speech": "verb",
+    "transliteration": "yasha"
+  },
+  "malak": {
+    "strong": "H4397",
+    "meaning": "messenger, angel",
+    "english_words": ["angel", "messenger"],
+    "part_of_speech": "noun",
+    "transliteration": "malak"
+  },
+  "melek": {
+    "strong": "H4428",
+    "meaning": "king, ruler",
+    "english_words": ["king"],
+    "part_of_speech": "noun",
+    "transliteration": "melek"
+  },
+  "malchut": {
+    "strong": "H4438",
+    "meaning": "kingdom, reign, royal power",
+    "english_words": ["kingdom", "reign"],
+    "part_of_speech": "noun",
+    "transliteration": "malchut"
+  },
+  "mavet": {
+    "strong": "H4194",
+    "meaning": "death, dying",
+    "english_words": ["death", "die", "dead"],
+    "part_of_speech": "noun",
+    "transliteration": "mavet"
+  },
+  "chayyim": {
+    "strong": "H2416",
+    "meaning": "life, living, lifetime",
+    "english_words": ["life", "living", "alive"],
+    "part_of_speech": "noun",
+    "transliteration": "chayyim"
+  },
+  "basar": {
+    "strong": "H1320",
+    "meaning": "flesh, body, mankind",
+    "english_words": ["flesh", "body"],
+    "part_of_speech": "noun",
+    "transliteration": "basar"
+  },
+  "leb": {
+    "strong": "H3820",
+    "meaning": "heart, mind, understanding",
+    "english_words": ["heart", "mind"],
+    "part_of_speech": "noun",
+    "transliteration": "leb"
+  },
+  "nephesh": {
+    "strong": "H5315",
+    "meaning": "soul, life, person, self",
+    "english_words": ["soul", "life", "person"],
+    "part_of_speech": "noun",
+    "transliteration": "nephesh"
+  },
+  "chata": {
+    "strong": "H2398",
+    "meaning": "to miss, sin, do wrong",
+    "english_words": ["sin", "sinned"],
+    "part_of_speech": "verb",
+    "transliteration": "chata"
+  },
+  "chattat": {
+    "strong": "H2403",
+    "meaning": "sin, sin offering",
+    "english_words": ["sin", "offering"],
+    "part_of_speech": "noun",
+    "transliteration": "chattat"
+  },
+  "salach": {
+    "strong": "H5545",
+    "meaning": "to forgive, pardon",
+    "english_words": ["forgive", "forgiveness", "pardon"],
+    "part_of_speech": "verb",
+    "transliteration": "salach"
+  },
+  "tikvah": {
+    "strong": "H8615",
+    "meaning": "hope, expectation, cord",
+    "english_words": ["hope", "expectation"],
+    "part_of_speech": "noun",
+    "transliteration": "tikvah"
+  },
+  "yachal": {
+    "strong": "H3176",
+    "meaning": "to wait, hope, expect",
+    "english_words": ["hope", "wait", "expect"],
+    "part_of_speech": "verb",
+    "transliteration": "yachal"
+  },
+  "ab": {
+    "strong": "H1",
+    "meaning": "father, ancestor, chief",
+    "english_words": ["father", "Father"],
+    "part_of_speech": "noun",
+    "transliteration": "ab"
+  },
+  "ben": {
+    "strong": "H1121",
+    "meaning": "son, child, member",
+    "english_words": ["son", "child", "children"],
+    "part_of_speech": "noun",
+    "transliteration": "ben"
+  },
+  "bat": {
+    "strong": "H1323",
+    "meaning": "daughter, girl",
+    "english_words": ["daughter"],
+    "part_of_speech": "noun",
+    "transliteration": "bat"
+  },
+  "ish": {
+    "strong": "H376",
+    "meaning": "man, male, husband",
+    "english_words": ["man", "husband"],
+    "part_of_speech": "noun",
+    "transliteration": "ish"
+  },
+  "ishah": {
+    "strong": "H802",
+    "meaning": "woman, wife, female",
+    "english_words": ["woman", "wife"],
+    "part_of_speech": "noun",
+    "transliteration": "ishah"
+  },
+  "ach": {
+    "strong": "H251",
+    "meaning": "brother, relative, kinsman",
+    "english_words": ["brother", "brethren"],
+    "part_of_speech": "noun",
+    "transliteration": "ach"
+  },
+  "achot": {
+    "strong": "H269",
+    "meaning": "sister",
+    "english_words": ["sister"],
+    "part_of_speech": "noun",
+    "transliteration": "achot"
+  },
+  "am": {
+    "strong": "H5971",
+    "meaning": "people, nation, folk",
+    "english_words": ["people", "nation"],
+    "part_of_speech": "noun",
+    "transliteration": "am"
+  },
+  "goy": {
+    "strong": "H1471",
+    "meaning": "nation, people, Gentiles",
+    "english_words": ["nation", "nations", "Gentiles"],
+    "part_of_speech": "noun",
+    "transliteration": "goy"
+  },
+  "olam": {
+    "strong": "H5769",
+    "meaning": "eternity, forever, everlasting",
+    "english_words": ["forever", "everlasting", "eternal"],
+    "part_of_speech": "noun",
+    "transliteration": "olam"
+  },
+  "yom": {
+    "strong": "H3117",
+    "meaning": "day, time, year",
+    "english_words": ["day", "days", "time"],
+    "part_of_speech": "noun",
+    "transliteration": "yom"
+  },
+  "et": {
+    "strong": "H6256",
+    "meaning": "time, season",
+    "english_words": ["time", "season"],
+    "part_of_speech": "noun",
+    "transliteration": "et"
+  },
+  "makom": {
+    "strong": "H4725",
+    "meaning": "place, location, position",
+    "english_words": ["place"],
+    "part_of_speech": "noun",
+    "transliteration": "makom"
+  },
+  "shamayim": {
+    "strong": "H8064",
+    "meaning": "heaven, heavens, sky",
+    "english_words": ["heaven", "heavens", "sky"],
+    "part_of_speech": "noun",
+    "transliteration": "shamayim"
+  },
+  "erets": {
+    "strong": "H776",
+    "meaning": "earth, land, country",
+    "english_words": ["earth", "land", "country"],
+    "part_of_speech": "noun",
+    "transliteration": "erets"
+  },
+  "yam": {
+    "strong": "H3220",
+    "meaning": "sea, west",
+    "english_words": ["sea"],
+    "part_of_speech": "noun",
+    "transliteration": "yam"
+  },
+  "har": {
+    "strong": "H2022",
+    "meaning": "mountain, hill",
+    "english_words": ["mountain", "hill"],
+    "part_of_speech": "noun",
+    "transliteration": "har"
+  },
+  "mayim": {
+    "strong": "H4325",
+    "meaning": "water, waters",
+    "english_words": ["water", "waters"],
+    "part_of_speech": "noun",
+    "transliteration": "mayim"
+  },
+  "esh": {
+    "strong": "H784",
+    "meaning": "fire",
+    "english_words": ["fire"],
+    "part_of_speech": "noun",
+    "transliteration": "esh"
+  },
+  "or": {
+    "strong": "H216",
+    "meaning": "light, illumination",
+    "english_words": ["light"],
+    "part_of_speech": "noun",
+    "transliteration": "or"
+  },
+  "choshek": {
+    "strong": "H2822",
+    "meaning": "darkness, obscurity",
+    "english_words": ["darkness", "dark"],
+    "part_of_speech": "noun",
+    "transliteration": "choshek"
+  },
+  "shemesh": {
+    "strong": "H8121",
+    "meaning": "sun",
+    "english_words": ["sun"],
+    "part_of_speech": "noun",
+    "transliteration": "shemesh"
+  },
+  "yareach": {
+    "strong": "H3394",
+    "meaning": "moon",
+    "english_words": ["moon"],
+    "part_of_speech": "noun",
+    "transliteration": "yareach"
+  },
+  "kochab": {
+    "strong": "H3556",
+    "meaning": "star",
+    "english_words": ["star", "stars"],
+    "part_of_speech": "noun",
+    "transliteration": "kochab"
+  },
+  "kesef": {
+    "strong": "H3701",
+    "meaning": "silver, money",
+    "english_words": ["silver", "money"],
+    "part_of_speech": "noun",
+    "transliteration": "kesef"
+  },
+  "zahab": {
+    "strong": "H2091",
+    "meaning": "gold",
+    "english_words": ["gold"],
+    "part_of_speech": "noun",
+    "transliteration": "zahab"
+  },
+  "bet": {
+    "strong": "H1004",
+    "meaning": "house, household, family",
+    "english_words": ["house", "household"],
+    "part_of_speech": "noun",
+    "transliteration": "bet"
+  },
+  "ir": {
+    "strong": "H5892",
+    "meaning": "city, town",
+    "english_words": ["city"],
+    "part_of_speech": "noun",
+    "transliteration": "ir"
+  },
+  "derek": {
+    "strong": "H1870",
+    "meaning": "way, road, distance, journey",
+    "english_words": ["way", "path", "road"],
+    "part_of_speech": "noun",
+    "transliteration": "derek"
+  },
+  "shemuel": {
+    "strong": "H8050",
+    "meaning": "heard of God, Samuel",
+    "english_words": ["Samuel"],
+    "part_of_speech": "proper noun",
+    "transliteration": "shemuel"
+  },
+  "david": {
+    "strong": "H1732",
+    "meaning": "beloved, David",
+    "english_words": ["David"],
+    "part_of_speech": "proper noun",
+    "transliteration": "david"
+  },
+  "shlomo": {
+    "strong": "H8010",
+    "meaning": "peaceful, Solomon",
+    "english_words": ["Solomon"],
+    "part_of_speech": "proper noun",
+    "transliteration": "shlomo"
+  },
+  "mosheh": {
+    "strong": "H4872",
+    "meaning": "drawn out, Moses",
+    "english_words": ["Moses"],
+    "part_of_speech": "proper noun",
+    "transliteration": "mosheh"
+  },
+  "avraham": {
+    "strong": "H85",
+    "meaning": "father of multitude, Abraham",
+    "english_words": ["Abraham"],
+    "part_of_speech": "proper noun",
+    "transliteration": "avraham"
+  },
+  "yitschaq": {
+    "strong": "H3327",
+    "meaning": "laughter, Isaac",
+    "english_words": ["Isaac"],
+    "part_of_speech": "proper noun",
+    "transliteration": "yitschaq"
+  },
+  "yaaqob": {
+    "strong": "H3290",
+    "meaning": "heel holder, Jacob",
+    "english_words": ["Jacob"],
+    "part_of_speech": "proper noun",
+    "transliteration": "yaaqob"
+  },
+  "israel": {
+    "strong": "H3478",
+    "meaning": "God strives, Israel",
+    "english_words": ["Israel"],
+    "part_of_speech": "proper noun",
+    "transliteration": "israel"
+  }
+}
