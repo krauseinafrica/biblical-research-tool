@@ -9,10 +9,16 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
     }
     
     greek_hebrew_addon = """
-    Include relevant Greek or Hebrew word insights where applicable, explaining:
-    - Original word meanings
-    - How the word is used elsewhere in Scripture
-    - Theological significance of the original language
+    
+    IMPORTANT: Include a dedicated "GREEK/HEBREW INSIGHTS" section with:
+    - Key original language words with transliterations (e.g., Greek: agape, Hebrew: hesed)
+    - Meaning and nuance of original words that may be lost in translation
+    - How these words are used in other significant Bible passages
+    - Theological significance of the original language choices
+    - Practical implications for understanding and application
+    - Suggestions for further word study using tools like Strong's Concordance or Blue Letter Bible
+    
+    Format this as a clear, separate section that helps users understand the richness of the original languages.
     """ if include_greek_hebrew else ""
     
     # Research type specific prompts
@@ -27,9 +33,9 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         4. REFLECTION QUESTIONS: Thoughtful questions that include specific Bible verse references for further study (format: "Question? (See [verse reference] for insights)")
         5. PRACTICAL APPLICATION: Concrete application points with supporting verses
         6. ADDITIONAL VERSES FOR STUDY: Suggested verses for deeper exploration
+        {greek_hebrew_addon}
         
         {depth_instruction[depth_level]}
-        {greek_hebrew_addon}
         
         Format your response with clear section headers. For reflection questions, always include specific Bible verse references that help answer each question.
         """
