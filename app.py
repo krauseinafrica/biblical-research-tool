@@ -1,4 +1,5 @@
 # Add these imports to your existing app.py
+import streamlit as st
 import json
 import plotly.express as px
 import plotly.graph_objects as go
