@@ -1,5 +1,17 @@
 import streamlit as st
 
+# Import prompts from separate module
+try:
+    from utils.prompts import get_research_prompt, get_verse_enhancement_prompt
+except ImportError:
+    # Fallback if utils not available - define locally
+    def get_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
+        # Simplified fallback prompt
+        return f"Please provide a {depth_level.lower()} {research_type.lower()} on: {user_input}"
+    
+    def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
+        return f"Please enhance this content with Bible verse references: {content}"
+
 # Page configuration
 st.set_page_config(
     page_title="Biblical Research Tool",
@@ -7,32 +19,33 @@ st.set_page_config(
     layout="wide"
 )
 
-def enhance_questions_with_verses(content: str) -> str:
-    """Add Bible verse references to reflection questions"""
-    # This is a simple implementation - could be enhanced with AI in the future
-    question_patterns = [
-        ("How does God's design for marriage reflect His character?", "Genesis 2:24, Ephesians 5:25-33"),
-        ("What does Jesus' response reveal about God's heart?", "Matthew 19:3-9, Mark 10:2-12"),
-        ("How do these passages apply to modern", "1 Corinthians 10:31, Romans 12:2"),
-        ("What principles can we draw about God's grace", "Ephesians 2:8-9, Romans 8:1"),
-        ("How does this verse relate to salvation?", "Romans 3:23, Ephesians 2:8-9"),
-        ("What does this teach us about faith?", "Hebrews 11:1, Romans 10:17"),
-        ("How should we respond to God's love?", "1 John 4:19, Romans 5:8"),
-        ("What does this reveal about God's character?", "Exodus 34:6-7, 1 John 4:8"),
-        ("How can we apply this principle?", "James 1:22, 2 Timothy 3:16-17"),
-        ("What does Scripture say about forgiveness?", "Matthew 6:14-15, Ephesians 4:32"),
-        ("How does this connect to the Gospel?", "1 Corinthians 15:3-4, Romans 1:16")
-    ]
-    
-    enhanced_content = content
-    for question_part, verse_ref in question_patterns:
-        if question_part in content:
-            enhanced_content = enhanced_content.replace(
-                question_part,
-                f"{question_part} *(See {verse_ref} for insights)*"
-            )
-    
-    return enhanced_content
+def enhance_questions_with_verses_ai(content: str, research_context: str, claude_api_key: str) -> str:
+    """Use AI to enhance questions with relevant Bible verse references"""
+    try:
+        import anthropic
+        
+        client = anthropic.Anthropic(api_key=claude_api_key)
+        
+        enhancement_prompt = get_verse_enhancement_prompt(content, research_context)
+        
+        response = client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=1500,
+            system="""You are a biblical research assistant. Enhance study questions by adding specific, 
+            relevant Bible verse references that help answer each question. Be conservative and theologically sound.""",
+            messages=[
+                {
+                    "role": "user", 
+                    "content": enhancement_prompt
+                }
+            ]
+        )
+        
+        return response.content[0].text
+        
+    except Exception as e:
+        # If AI enhancement fails, return original content
+        return content
 
 def get_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
     """Generate appropriate prompt based on research type and parameters"""
@@ -156,7 +169,7 @@ def generate_research_with_claude(prompt: str, api_key: str) -> str:
         """
         
         response = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-5-haiku-20241022",
             max_tokens=2000,
             system=system_message,
             messages=[
@@ -346,9 +359,13 @@ def main():
                         # Process the content to add verse references to questions
                         content = ':'.join(section.split(':')[1:]).strip() if ':' in section else section
                         
-                        # If this is a reflection/questions section, enhance with verse references
+                        # If this is a reflection/questions section, enhance with AI-generated verse references
                         if 'reflection' in section_lower or 'questions' in section_lower:
-                            content = enhance_questions_with_verses(content)
+                            content = enhance_questions_with_verses_ai(
+                                content, 
+                                f"{research_type}: {user_input}", 
+                                claude_api_key
+                            )
                         
                         st.markdown(content)
                         st.markdown("</div></div>", unsafe_allow_html=True)
