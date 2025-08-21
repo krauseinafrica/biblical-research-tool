@@ -518,7 +518,10 @@ def main():
         )
         
         # Input based on research type
-        if research_type == "Topical Study":
+        if research_type == "Word Study":
+            # No user input needed for Word Study - it has its own interface
+            user_input = None
+        elif research_type == "Topical Study":
             user_input = st.text_input(
                 "Enter topic or theme:",
                 placeholder="e.g., faith, prayer, salvation"
@@ -693,8 +696,10 @@ def main():
                             
                         except Exception as e:
                             st.error(f"Error refining research: {str(e)}")
-        else:
-            st.info("👈 Select a research type and enter your topic or verse to begin.")
+            
+            # Only show this message if no results for non-Word Study types
+            if not st.session_state.results:
+                st.info("👈 Select a research type and enter your topic or verse to begin.")
     
     # Cost tracker at bottom of page
     if st.session_state.request_count > 0:
