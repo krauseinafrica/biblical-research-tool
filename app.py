@@ -206,21 +206,12 @@ def create_word_study_interface():
     # Word selection dropdown
     available_words = list(word_occurrences.keys())
     
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        selected_word = st.selectbox(
-            "Select word to study:",
-            options=available_words,
-            help="Choose a word to see its distribution across Scripture",
-            index=0
-        )
-    
-    with col2:
-        chart_type = st.radio(
-            "Chart Type:",
-            ["Bar Chart", "Line Chart", "Both"]
-        )
+    selected_word = st.selectbox(
+        "Select word to study:",
+        options=available_words,
+        help="Choose a word to see its distribution across Scripture",
+        index=0
+    )
     
     if selected_word and selected_word in word_occurrences:
         # Get related Greek/Hebrew words for this English word
@@ -277,11 +268,10 @@ def create_word_study_interface():
                 selected_word, 
                 word_data, 
                 hebrew_selection, 
-                greek_selection,
-                chart_type
+                greek_selection
             )
 
-def create_word_distribution_visualization(word, word_data, hebrew_selection, greek_selection, chart_type):
+def create_word_distribution_visualization(word, word_data, hebrew_selection, greek_selection):
     """Create the word distribution visualization"""
     
     # Bible books in order
@@ -343,41 +333,20 @@ def create_word_distribution_visualization(word, word_data, hebrew_selection, gr
         
         df = pd.DataFrame(chart_data)
         
-        # Create visualizations based on selection
-        if chart_type in ["Bar Chart", "Both"]:
-            books_with_data = df[df['total_occurrences'] > 0]
-            if not books_with_data.empty:
-                fig_bar = px.bar(
-                    books_with_data, 
-                    x="book", 
-                    y="total_occurrences",
-                    title=f"'{word.title()}' Distribution - Bar Chart (Total: {total_count} occurrences)",
-                    labels={"book": "Bible Books", "total_occurrences": "Occurrences"},
-                    color="total_occurrences",
-                    color_continuous_scale="viridis"
-                )
-                fig_bar.update_layout(xaxis_tickangle=-45, height=500)
-                st.plotly_chart(fig_bar, use_container_width=True)
-        
-        if chart_type in ["Line Chart", "Both"]:
-            fig_line = px.line(
-                df, 
-                x="book_index", 
+        # Create bar chart visualization
+        books_with_data = df[df['total_occurrences'] > 0]
+        if not books_with_data.empty:
+            fig_bar = px.bar(
+                books_with_data, 
+                x="book", 
                 y="total_occurrences",
-                title=f"'{word.title()}' Distribution - Line Chart",
-                labels={"book_index": "Bible Book (Order)", "total_occurrences": "Occurrences"},
-                markers=True
+                title=f"'{word.title()}' Distribution Across Bible Books (Total: {total_count} occurrences)",
+                labels={"book": "Bible Books", "total_occurrences": "Occurrences"},
+                color="total_occurrences",
+                color_continuous_scale="viridis"
             )
-            
-            # Add book names as hover data
-            fig_line.update_traces(
-                mode='markers+lines',
-                hovertemplate='<b>%{customdata}</b><br>Occurrences: %{y}<extra></extra>',
-                customdata=df['book']
-            )
-            
-            fig_line.update_layout(height=500)
-            st.plotly_chart(fig_line, use_container_width=True)
+            fig_bar.update_layout(xaxis_tickangle=-45, height=500)
+            st.plotly_chart(fig_bar, use_container_width=True)
         
         # Summary statistics
         create_word_study_summary(chart_data, total_count, selected_words)
