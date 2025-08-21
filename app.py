@@ -296,7 +296,8 @@ def main():
                         any(keyword in line.upper() for keyword in 
                             ['KEY BIBLE VERSES', 'CONTEXT', 'CONNECTIONS', 'REFLECTION QUESTIONS', 
                              'PRACTICAL APPLICATION', 'ADDITIONAL VERSES', 'CROSS-REFERENCES',
-                             'HISTORICAL BACKGROUND', 'THEOLOGICAL THEMES', 'APPLICATION PRINCIPLES'])):
+                             'HISTORICAL BACKGROUND', 'THEOLOGICAL THEMES', 'APPLICATION PRINCIPLES',
+                             'GREEK/HEBREW INSIGHTS', 'GREEK', 'HEBREW'])):
                         if current_section:
                             sections.append(current_section)
                         current_section = line + '\n'
@@ -331,6 +332,9 @@ def main():
                     elif 'additional verses' in section_lower:
                         icon = "📚"
                         color = "cyan"
+                    elif 'greek' in section_lower or 'hebrew' in section_lower:
+                        icon = "🔤"
+                        color = "gold"
                     elif 'theological themes' in section_lower:
                         icon = "⛪"
                         color = "indigo"
