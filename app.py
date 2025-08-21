@@ -19,7 +19,7 @@ st.set_page_config(
     layout="wide"
 )
 
-def enhance_questions_with_verses_ai(content: str, research_context: str, claude_api_key: str) -> str:
+def enhance_questions_with_verses_ai(content: str, research_context: str, claude_api_key: str) -> tuple[str, float]:
     """Use AI to enhance questions with relevant Bible verse references"""
     try:
         import anthropic
@@ -41,11 +41,16 @@ def enhance_questions_with_verses_ai(content: str, research_context: str, claude
             ]
         )
         
-        return response.content[0].text
+        # Calculate cost
+        input_tokens = response.usage.input_tokens
+        output_tokens = response.usage.output_tokens
+        cost = calculate_cost(input_tokens, output_tokens)
+        
+        return response.content[0].text, cost
         
     except Exception as e:
-        # If AI enhancement fails, return original content
-        return content
+        # If AI enhancement fails, return original content with no cost
+        return content, 0.0
 
 def get_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
     """Generate appropriate prompt based on research type and parameters"""
@@ -138,8 +143,27 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         Help the reader see the interconnected nature of Scripture.
         """
 
-def generate_research_with_claude(prompt: str, api_key: str) -> str:
-    """Generate biblical research using Claude API"""
+def calculate_cost(input_tokens: int, output_tokens: int, model: str = "claude-3-5-haiku-20241022") -> float:
+    """Calculate cost based on token usage"""
+    # Claude 3.5 Haiku pricing (as of current date)
+    if "haiku" in model:
+        input_cost_per_1k = 0.00025  # $0.25 per 1K input tokens
+        output_cost_per_1k = 0.00125  # $1.25 per 1K output tokens
+    elif "sonnet" in model:
+        input_cost_per_1k = 0.003    # $3.00 per 1K input tokens  
+        output_cost_per_1k = 0.015   # $15.00 per 1K output tokens
+    else:
+        # Default to Haiku pricing
+        input_cost_per_1k = 0.00025
+        output_cost_per_1k = 0.00125
+    
+    input_cost = (input_tokens / 1000) * input_cost_per_1k
+    output_cost = (output_tokens / 1000) * output_cost_per_1k
+    
+    return input_cost + output_cost
+
+def generate_research_with_claude(prompt: str, api_key: str) -> tuple[str, float]:
+    """Generate biblical research using Claude API and return result with cost"""
     try:
         import anthropic
         
@@ -180,14 +204,23 @@ def generate_research_with_claude(prompt: str, api_key: str) -> str:
             ]
         )
         
-        return response.content[0].text
+        # Calculate cost based on token usage
+        input_tokens = response.usage.input_tokens
+        output_tokens = response.usage.output_tokens
+        cost = calculate_cost(input_tokens, output_tokens)
+        
+        return response.content[0].text, cost
         
     except Exception as e:
-        return f"Error generating research: {str(e)}"
+        return f"Error generating research: {str(e)}", 0.0
 
 # Initialize session state
 if 'results' not in st.session_state:
     st.session_state.results = None
+if 'total_cost' not in st.session_state:
+    st.session_state.total_cost = 0.0
+if 'request_count' not in st.session_state:
+    st.session_state.request_count = 0
 
 def main():
     st.title("📖 Biblical Research Tool")
@@ -267,8 +300,10 @@ def main():
                         )
                         
                         # Generate research using Claude
-                        result = generate_research_with_claude(prompt, claude_api_key)
+                        result, cost = generate_research_with_claude(prompt, claude_api_key)
                         st.session_state.results = result
+                        st.session_state.total_cost += cost
+                        st.session_state.request_count += 1
                         
                     except Exception as e:
                         st.error(f"Error generating research: {str(e)}")
@@ -429,7 +464,9 @@ def format_dict_item(item):
                             {st.session_state.results[:500]}...
                             """
                             
-                            refined_result = generate_research_with_claude(refined_prompt, claude_api_key)
+                            refined_result, refine_cost = generate_research_with_claude(refined_prompt, claude_api_key)
+                            st.session_state.total_cost += refine_cost
+                            st.session_state.request_count += 1
                             st.markdown("### Refined Analysis:")
                             st.markdown(refined_result)
                             
@@ -437,6 +474,23 @@ def format_dict_item(item):
                             st.error(f"Error refining research: {str(e)}")
         else:
             st.info("👈 Select a research type and enter your topic or verse to begin.")
+    
+    # Cost tracker at bottom of page
+    if st.session_state.request_count > 0:
+        st.divider()
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Research Requests", st.session_state.request_count)
+        with col2:
+            st.metric("Session Cost", f"${st.session_state.total_cost:.4f}")
+        with col3:
+            if st.button("🔄 Reset Cost Tracker", help="Reset cost tracking for this session"):
+                st.session_state.total_cost = 0.0
+                st.session_state.request_count = 0
+                st.rerun()
+        
+        # Small disclaimer
+        st.caption("💡 Cost tracking is approximate based on Claude 3.5 Haiku pricing. Actual costs may vary slightly.")
 
 if __name__ == "__main__":
     main()
