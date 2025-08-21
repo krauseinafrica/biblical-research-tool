@@ -1,4 +1,8 @@
-import streamlit as st
+# Add these imports to your existing app.py
+import json
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas as pd
 
 # Page configuration
 st.set_page_config(
@@ -168,6 +172,312 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         Format your response with clear section headers using ALL CAPS for section names.
         """
 
+def load_bible_word_data():
+    """Load Bible word data from local JSON files"""
+    try:
+        # Load from data/ folder in your repo
+        with open('data/greek_words.json', 'r') as f:
+            greek_words = json.load(f)
+        with open('data/hebrew_words.json', 'r') as f:
+            hebrew_words = json.load(f)
+        with open('data/word_occurrences.json', 'r') as f:
+            word_occurrences = json.load(f)
+        
+        return greek_words, hebrew_words, word_occurrences
+    except FileNotFoundError as e:
+        st.error(f"Data file not found: {e}")
+        st.error("Please ensure the data/ folder contains: greek_words.json, hebrew_words.json, word_occurrences.json")
+        return {}, {}, {}
+
+def create_word_study_interface():
+    """Create the word study interface"""
+    
+    st.subheader("📈 Biblical Word Study")
+    st.markdown("*Explore how key biblical words appear throughout Scripture*")
+    
+    # Load data
+    greek_words, hebrew_words, word_occurrences = load_bible_word_data()
+    
+    if not word_occurrences:
+        st.error("Word study data not available. Please check your data files.")
+        return
+    
+    # Word selection dropdown
+    available_words = list(word_occurrences.keys())
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        selected_word = st.selectbox(
+            "Select word to study:",
+            options=available_words,
+            help="Choose a word to see its distribution across Scripture",
+            index=0
+        )
+    
+    with col2:
+        chart_type = st.radio(
+            "Chart Type:",
+            ["Bar Chart", "Line Chart", "Both"]
+        )
+    
+    if selected_word and selected_word in word_occurrences:
+        # Get related Greek/Hebrew words for this English word
+        word_data = word_occurrences[selected_word]
+        
+        related_greek = {word: info for word, info in greek_words.items() 
+                        if selected_word in info.get('english_words', [])}
+        related_hebrew = {word: info for word, info in hebrew_words.items() 
+                         if selected_word in info.get('english_words', [])}
+        
+        # Word selection interface
+        st.subheader("🔤 Select Original Language Words")
+        
+        col1, col2 = st.columns(2)
+        
+        hebrew_selection = {}
+        greek_selection = {}
+        
+        with col1:
+            st.markdown("#### Hebrew Words")
+            if related_hebrew:
+                for word, info in related_hebrew.items():
+                    if word in word_data:  # Only show words that have occurrence data
+                        selected = st.checkbox(
+                            f"**{word}** ({info['strong']}) - {info['meaning']}", 
+                            value=True,
+                            key=f"heb_{word}"
+                        )
+                        hebrew_selection[word] = selected
+                if not any(word in word_data for word in related_hebrew.keys()):
+                    st.info("No Hebrew occurrence data available for this word")
+            else:
+                st.info("No Hebrew words found for this term")
+        
+        with col2:
+            st.markdown("#### Greek Words")
+            if related_greek:
+                for word, info in related_greek.items():
+                    if word in word_data:  # Only show words that have occurrence data
+                        selected = st.checkbox(
+                            f"**{word}** ({info['strong']}) - {info['meaning']}", 
+                            value=True,
+                            key=f"grk_{word}"
+                        )
+                        greek_selection[word] = selected
+                if not any(word in word_data for word in related_greek.keys()):
+                    st.info("No Greek occurrence data available for this word")
+            else:
+                st.info("No Greek words found for this term")
+        
+        # Generate visualization
+        if st.button("📊 Generate Word Distribution Chart", type="primary"):
+            create_word_distribution_visualization(
+                selected_word, 
+                word_data, 
+                hebrew_selection, 
+                greek_selection,
+                chart_type
+            )
+
+def create_word_distribution_visualization(word, word_data, hebrew_selection, greek_selection, chart_type):
+    """Create the word distribution visualization"""
+    
+    # Bible books in order
+    bible_books = [
+        "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+        "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings",
+        "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther",
+        "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Songs",
+        "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel",
+        "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
+        "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi",
+        "Matthew", "Mark", "Luke", "John", "Acts",
+        "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+        "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians",
+        "1 Timothy", "2 Timothy", "Titus", "Philemon",
+        "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John",
+        "Jude", "Revelation"
+    ]
+    
+    # Prepare chart data
+    chart_data = []
+    total_count = 0
+    selected_words = []
+    
+    # Collect selected words and their data
+    for original_word, selected in hebrew_selection.items():
+        if selected and original_word in word_data:
+            selected_words.append(f"{original_word} (Hebrew)")
+            
+    for original_word, selected in greek_selection.items():
+        if selected and original_word in word_data:
+            selected_words.append(f"{original_word} (Greek)")
+    
+    # Build chart data
+    for book in bible_books:
+        book_total = 0
+        
+        # Add selected Hebrew words
+        for original_word, selected in hebrew_selection.items():
+            if selected and original_word in word_data:
+                count = word_data[original_word].get(book, 0)
+                book_total += count
+        
+        # Add selected Greek words
+        for original_word, selected in greek_selection.items():
+            if selected and original_word in word_data:
+                count = word_data[original_word].get(book, 0)
+                book_total += count
+        
+        chart_data.append({
+            "book": book,
+            "book_index": bible_books.index(book) + 1,
+            "total_occurrences": book_total
+        })
+        total_count += book_total
+    
+    if total_count > 0:
+        st.subheader(f"📊 Distribution of '{word.title()}' Across Scripture")
+        
+        df = pd.DataFrame(chart_data)
+        
+        # Create visualizations based on selection
+        if chart_type in ["Bar Chart", "Both"]:
+            books_with_data = df[df['total_occurrences'] > 0]
+            if not books_with_data.empty:
+                fig_bar = px.bar(
+                    books_with_data, 
+                    x="book", 
+                    y="total_occurrences",
+                    title=f"'{word.title()}' Distribution - Bar Chart (Total: {total_count} occurrences)",
+                    labels={"book": "Bible Books", "total_occurrences": "Occurrences"},
+                    color="total_occurrences",
+                    color_continuous_scale="viridis"
+                )
+                fig_bar.update_layout(xaxis_tickangle=-45, height=500)
+                st.plotly_chart(fig_bar, use_container_width=True)
+        
+        if chart_type in ["Line Chart", "Both"]:
+            fig_line = px.line(
+                df, 
+                x="book_index", 
+                y="total_occurrences",
+                title=f"'{word.title()}' Distribution - Line Chart",
+                labels={"book_index": "Bible Book (Order)", "total_occurrences": "Occurrences"},
+                markers=True
+            )
+            
+            # Add book names as hover data
+            fig_line.update_traces(
+                mode='markers+lines',
+                hovertemplate='<b>%{customdata}</b><br>Occurrences: %{y}<extra></extra>',
+                customdata=df['book']
+            )
+            
+            fig_line.update_layout(height=500)
+            st.plotly_chart(fig_line, use_container_width=True)
+        
+        # Summary statistics
+        create_word_study_summary(chart_data, total_count, selected_words)
+        
+        # Testament comparison
+        create_testament_comparison_chart(chart_data)
+        
+    else:
+        st.warning("No occurrences found for the selected word combinations. Try selecting different Hebrew/Greek words.")
+
+def create_word_study_summary(chart_data, total_count, selected_words):
+    """Create summary statistics for word study"""
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Occurrences", total_count)
+    
+    with col2:
+        books_with_word = len([x for x in chart_data if x["total_occurrences"] > 0])
+        st.metric("Books with Word", f"{books_with_word}/66")
+    
+    with col3:
+        if books_with_word > 0:
+            avg_per_book = total_count / books_with_word
+            st.metric("Avg per Book", f"{avg_per_book:.1f}")
+        else:
+            st.metric("Avg per Book", "0")
+    
+    with col4:
+        st.metric("Words Analyzed", len(selected_words))
+    
+    # Detailed breakdown
+    if total_count > 0:
+        st.subheader("📋 Detailed Book Breakdown")
+        detailed_data = [
+            {"Book": item["book"], "Occurrences": item["total_occurrences"]}
+            for item in chart_data if item["total_occurrences"] > 0
+        ]
+        
+        if detailed_data:
+            detailed_df = pd.DataFrame(detailed_data)
+            detailed_df = detailed_df.sort_values("Occurrences", ascending=False)
+            
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                st.dataframe(detailed_df, use_container_width=True, hide_index=True)
+            with col2:
+                # Top 5 books
+                top_5 = detailed_df.head(5)
+                st.markdown("**Top 5 Books:**")
+                for _, row in top_5.iterrows():
+                    st.markdown(f"• {row['Book']}: {row['Occurrences']}")
+
+def create_testament_comparison_chart(chart_data):
+    """Create Old vs New Testament comparison"""
+    
+    old_testament_books = set([
+        "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+        "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings",
+        "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther",
+        "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Songs",
+        "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel",
+        "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
+        "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
+    ])
+    
+    ot_total = sum(item["total_occurrences"] for item in chart_data if item["book"] in old_testament_books)
+    nt_total = sum(item["total_occurrences"] for item in chart_data if item["book"] not in old_testament_books)
+    
+    if ot_total > 0 or nt_total > 0:
+        st.subheader("📊 Testament Distribution")
+        
+        col1, col2 = st.columns([1, 1])
+        
+        with col1:
+            # Pie chart
+            testament_df = pd.DataFrame({
+                "Testament": ["Old Testament", "New Testament"],
+                "Occurrences": [ot_total, nt_total]
+            })
+            
+            fig = px.pie(
+                testament_df, 
+                values="Occurrences", 
+                names="Testament",
+                title="OT vs NT Distribution"
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        
+        with col2:
+            # Metrics
+            total = ot_total + nt_total
+            if total > 0:
+                st.metric("Old Testament", f"{ot_total} ({ot_total/total*100:.1f}%)")
+                st.metric("New Testament", f"{nt_total} ({nt_total/total*100:.1f}%)")
+                
+                if ot_total > 0 and nt_total > 0:
+                    ratio = ot_total / nt_total
+                    st.metric("OT:NT Ratio", f"{ratio:.1f}:1")
+
 # Initialize session state
 if 'results' not in st.session_state:
     st.session_state.results = None
@@ -201,7 +511,8 @@ def main():
                 "Topical Study",
                 "Verse Analysis", 
                 "Study Guide Builder",
-                "Cross-Reference Explorer"
+                "Cross-Reference Explorer",
+                "Word Study"
             ]
         )
         
@@ -227,44 +538,50 @@ def main():
                 placeholder="e.g., 1 Corinthians 13:4"
             )
         
-        # Additional options
-        st.subheader("Options")
-        depth_level = st.radio(
-            "Study Depth:",
-            ["Basic", "Intermediate", "Deep Theological"]
-        )
-        
-        include_greek_hebrew = st.checkbox(
-            "Include Greek/Hebrew insights",
-            value=False
-        )
-        
-        # Generate button
-        if st.button("🔍 Generate Research", type="primary"):
-            if user_input:
-                with st.spinner("Generating biblical research..."):
-                    try:
-                        # Get the appropriate prompt
-                        prompt = get_research_prompt(
-                            research_type, 
-                            user_input, 
-                            depth_level, 
-                            include_greek_hebrew
-                        )
-                        
-                        # Generate research using Claude
-                        result, cost = generate_research_with_claude(prompt, claude_api_key)
-                        st.session_state.results = result
-                        st.session_state.total_cost += cost
-                        st.session_state.request_count += 1
-                        
-                    except Exception as e:
-                        st.error(f"Error generating research: {str(e)}")
-            else:
-                st.warning("Please enter your research topic or verse.")
+        # Handle Word Study separately - no user input needed initially
+        if research_type != "Word Study":
+            # Additional options
+            st.subheader("Options")
+            depth_level = st.radio(
+                "Study Depth:",
+                ["Basic", "Intermediate", "Deep Theological"]
+            )
+            
+            include_greek_hebrew = st.checkbox(
+                "Include Greek/Hebrew insights",
+                value=False
+            )
+            
+            # Generate button for regular research
+            if st.button("🔍 Generate Research", type="primary"):
+                if user_input:
+                    with st.spinner("Generating biblical research..."):
+                        try:
+                            # Get the appropriate prompt
+                            prompt = get_research_prompt(
+                                research_type, 
+                                user_input, 
+                                depth_level, 
+                                include_greek_hebrew
+                            )
+                            
+                            # Generate research using Claude
+                            result, cost = generate_research_with_claude(prompt, claude_api_key)
+                            st.session_state.results = result
+                            st.session_state.total_cost += cost
+                            st.session_state.request_count += 1
+                            
+                        except Exception as e:
+                            st.error(f"Error generating research: {str(e)}")
+                else:
+                    st.warning("Please enter your research topic or verse.")
     
     with col2:
-        st.header("Research Results")
+        # Handle Word Study differently
+        if research_type == "Word Study":
+            create_word_study_interface()
+        else:
+            st.header("Research Results")
         
         if st.session_state.results:
             # Simple formatted display
