@@ -7,6 +7,33 @@ st.set_page_config(
     layout="wide"
 )
 
+def enhance_questions_with_verses(content: str) -> str:
+    """Add Bible verse references to reflection questions"""
+    # This is a simple implementation - could be enhanced with AI in the future
+    question_patterns = [
+        ("How does God's design for marriage reflect His character?", "Genesis 2:24, Ephesians 5:25-33"),
+        ("What does Jesus' response reveal about God's heart?", "Matthew 19:3-9, Mark 10:2-12"),
+        ("How do these passages apply to modern", "1 Corinthians 10:31, Romans 12:2"),
+        ("What principles can we draw about God's grace", "Ephesians 2:8-9, Romans 8:1"),
+        ("How does this verse relate to salvation?", "Romans 3:23, Ephesians 2:8-9"),
+        ("What does this teach us about faith?", "Hebrews 11:1, Romans 10:17"),
+        ("How should we respond to God's love?", "1 John 4:19, Romans 5:8"),
+        ("What does this reveal about God's character?", "Exodus 34:6-7, 1 John 4:8"),
+        ("How can we apply this principle?", "James 1:22, 2 Timothy 3:16-17"),
+        ("What does Scripture say about forgiveness?", "Matthew 6:14-15, Ephesians 4:32"),
+        ("How does this connect to the Gospel?", "1 Corinthians 15:3-4, Romans 1:16")
+    ]
+    
+    enhanced_content = content
+    for question_part, verse_ref in question_patterns:
+        if question_part in content:
+            enhanced_content = enhanced_content.replace(
+                question_part,
+                f"{question_part} *(See {verse_ref} for insights)*"
+            )
+    
+    return enhanced_content
+
 def get_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
     """Generate appropriate prompt based on research type and parameters"""
     
@@ -30,17 +57,17 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         Conduct a topical Bible study on: {user_input}
         
         Please provide:
-        1. Key Bible verses related to this topic (ESV)
-        2. Brief context for each verse
-        3. How these verses connect to each other
-        4. Questions for further reflection
-        5. Practical application points
-        6. Suggested additional verses to study
+        1. KEY BIBLE VERSES: List relevant verses with full text (ESV)
+        2. CONTEXT: Brief context for each key verse
+        3. CONNECTIONS: How these verses connect to each other thematically
+        4. REFLECTION QUESTIONS: Thoughtful questions that include specific Bible verse references for further study (format: "Question? (See [verse reference] for insights)")
+        5. PRACTICAL APPLICATION: Concrete application points with supporting verses
+        6. ADDITIONAL VERSES FOR STUDY: Suggested verses for deeper exploration
         
         {depth_instruction[depth_level]}
         {greek_hebrew_addon}
         
-        Format your response with clear sections and include verse references.
+        Format your response with clear section headers. For reflection questions, always include specific Bible verse references that help answer each question.
         """
     
     elif research_type == "Verse Analysis":
@@ -48,17 +75,17 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         Provide a detailed analysis of: {user_input}
         
         Please include:
-        1. The verse(s) in context (ESV)
-        2. Historical and cultural background
-        3. Key theological themes
-        4. Cross-references to related passages
-        5. Questions for personal study
-        6. Application principles
+        1. VERSE IN CONTEXT: The verse(s) with surrounding context (ESV)
+        2. HISTORICAL BACKGROUND: Historical and cultural background
+        3. THEOLOGICAL THEMES: Key theological themes and doctrines
+        4. CROSS-REFERENCES: Related passages with explanations
+        5. REFLECTION QUESTIONS: Personal study questions with specific verse references for answers (format: "Question? (See [verse reference] for insights)")
+        6. APPLICATION PRINCIPLES: How to apply this passage today
         
         {depth_instruction[depth_level]}
         {greek_hebrew_addon}
         
-        Help the reader understand both the immediate context and broader biblical connections.
+        Help the reader understand both the immediate context and broader biblical connections. Include specific verse references with all reflection questions.
         """
     
     elif research_type == "Study Guide Builder":
@@ -66,18 +93,18 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         Create a study guide for: {user_input}
         
         Structure the guide with:
-        1. Opening questions to engage with the text
-        2. Observation questions (What does it say?)
-        3. Interpretation questions (What does it mean?)
-        4. Application questions (How should I respond?)
-        5. Cross-reference passages to explore
-        6. Discussion questions for group study
-        7. Prayer points based on the passage
+        1. OPENING QUESTIONS: Questions to engage with the text initially
+        2. OBSERVATION QUESTIONS: What does the text say? (Include verse references for answers)
+        3. INTERPRETATION QUESTIONS: What does it mean? (Include verse references for insights)
+        4. APPLICATION QUESTIONS: How should I respond? (Include verse references for guidance)
+        5. CROSS-REFERENCE PASSAGES: Related passages to explore with explanations
+        6. DISCUSSION QUESTIONS: Questions for group study with supporting verses
+        7. PRAYER POINTS: Prayer topics based on the passage
         
         {depth_instruction[depth_level]}
         {greek_hebrew_addon}
         
-        Make it suitable for both individual and group Bible study.
+        Make it suitable for both individual and group Bible study. Format questions as: "Question? (See [verse reference] for insights)"
         """
     
     else:  # Cross-Reference Explorer
@@ -239,8 +266,107 @@ def main():
         st.header("Research Results")
         
         if st.session_state.results:
-            # Display results
-            st.markdown(st.session_state.results)
+            # Display results with enhanced formatting
+            st.header("Research Results")
+            
+            # Parse and format the results
+            result_text = st.session_state.results
+            
+            # Split the content into sections based on numbered lists or headers
+            sections = []
+            current_section = ""
+            lines = result_text.split('\n')
+            
+            for line in lines:
+                if line.strip():
+                    # Check if this is a main section header
+                    if (line.strip().endswith(':') and 
+                        any(keyword in line.upper() for keyword in 
+                            ['KEY BIBLE VERSES', 'CONTEXT', 'CONNECTIONS', 'REFLECTION QUESTIONS', 
+                             'PRACTICAL APPLICATION', 'ADDITIONAL VERSES', 'CROSS-REFERENCES',
+                             'HISTORICAL BACKGROUND', 'THEOLOGICAL THEMES', 'APPLICATION PRINCIPLES'])):
+                        if current_section:
+                            sections.append(current_section)
+                        current_section = line + '\n'
+                    else:
+                        current_section += line + '\n'
+                else:
+                    current_section += '\n'
+            
+            if current_section:
+                sections.append(current_section)
+            
+            # Display each section in a container
+            for i, section in enumerate(sections):
+                if section.strip():
+                    # Determine section type and icon
+                    section_lower = section.lower()
+                    if 'key bible verses' in section_lower:
+                        icon = "📖"
+                        color = "blue"
+                    elif 'context' in section_lower:
+                        icon = "🏛️"
+                        color = "green"
+                    elif 'connections' in section_lower or 'cross-references' in section_lower:
+                        icon = "🔗"
+                        color = "orange"
+                    elif 'reflection' in section_lower or 'questions' in section_lower:
+                        icon = "💭"
+                        color = "purple"
+                    elif 'practical application' in section_lower or 'application' in section_lower:
+                        icon = "🎯"
+                        color = "red"
+                    elif 'additional verses' in section_lower:
+                        icon = "📚"
+                        color = "cyan"
+                    elif 'theological themes' in section_lower:
+                        icon = "⛪"
+                        color = "indigo"
+                    elif 'historical background' in section_lower:
+                        icon = "🏺"
+                        color = "brown"
+                    else:
+                        icon = "📝"
+                        color = "gray"
+                    
+                    # Create container with colored border
+                    with st.container():
+                        st.markdown(f"""
+                        <div style="
+                            border-left: 4px solid #{color};
+                            padding: 15px;
+                            margin: 10px 0;
+                            background-color: rgba(128, 128, 128, 0.1);
+                            border-radius: 5px;
+                        ">
+                        <h4 style="color: #{color}; margin-top: 0;">{icon} {section.split(':')[0] if ':' in section else 'Content'}</h4>
+                        <div style="margin-left: 10px;">
+                        """, unsafe_allow_html=True)
+                        
+                        # Process the content to add verse references to questions
+                        content = ':'.join(section.split(':')[1:]).strip() if ':' in section else section
+                        
+                        # If this is a reflection/questions section, enhance with verse references
+                        if 'reflection' in section_lower or 'questions' in section_lower:
+                            content = enhance_questions_with_verses(content)
+                        
+                        st.markdown(content)
+                        st.markdown("</div></div>", unsafe_allow_html=True)
+            
+            # If no clear sections were found, display as-is but in a container
+            if not sections:
+                with st.container():
+                    st.markdown(f"""
+                    <div style="
+                        border-left: 4px solid #1f77b4;
+                        padding: 15px;
+                        margin: 10px 0;
+                        background-color: rgba(31, 119, 180, 0.1);
+                        border-radius: 5px;
+                    ">
+                    """, unsafe_allow_html=True)
+                    st.markdown(result_text)
+                    st.markdown("</div>", unsafe_allow_html=True)
             
             # Option to refine results
             st.subheader("Refine Results")
