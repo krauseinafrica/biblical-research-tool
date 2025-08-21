@@ -1,8 +1,11 @@
 import streamlit as st
 import os
-from utils.claude_client import ClaudeClient
-from utils.bible_api import get_bible_verse
-from utils.prompts import get_research_prompt
+try:
+    from utils.claude_client import ClaudeClient
+    from utils.prompts import get_research_prompt
+except ImportError as e:
+    st.error(f"Import error: {e}")
+    st.stop()
 
 # Page configuration
 st.set_page_config(
