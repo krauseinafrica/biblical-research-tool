@@ -154,19 +154,24 @@ def main():
     st.title("📖 Biblical Research Tool")
     st.markdown("*A resource for deeper theological understanding and personal study*")
     
-    # Sidebar for API configuration
+    # Get API key from secrets
+    try:
+        claude_api_key = st.secrets["CLAUDE_API_KEY"]
+        api_key_status = "✅ Connected"
+    except KeyError:
+        claude_api_key = None
+        api_key_status = "❌ API Key not found in secrets"
+    
+    # Sidebar for configuration
     with st.sidebar:
         st.header("⚙️ Configuration")
         
-        # API Key input (for initial setup)
-        claude_api_key = st.text_input(
-            "Claude API Key", 
-            type="password",
-            help="Enter your Anthropic Claude API key"
-        )
+        # API Key status
+        st.write("**Claude API Status:**")
+        st.write(api_key_status)
         
-        if claude_api_key:
-            st.success("✅ Claude API key configured")
+        if not claude_api_key:
+            st.error("Please add CLAUDE_API_KEY to your Streamlit secrets.")
         
         st.divider()
         
@@ -252,7 +257,7 @@ def main():
                 if not user_input:
                     st.warning("Please enter your research topic or verse.")
                 if not claude_api_key:
-                    st.warning("Please enter your Claude API key in the sidebar.")
+                    st.warning("API key not found in secrets. Please configure CLAUDE_API_KEY in your Streamlit app settings.")
     
     with col2:
         st.header("Research Results")
