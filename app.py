@@ -280,7 +280,6 @@ def main():
         
         if st.session_state.results:
             # Display results with enhanced formatting
-            st.header("Research Results")
             
             # Parse and format the results
             result_text = st.session_state.results
