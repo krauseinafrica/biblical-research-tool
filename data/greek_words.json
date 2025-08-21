@@ -1,0 +1,373 @@
+{
+  "agape": {
+    "strong": "G25",
+    "meaning": "love, especially divine love, charity",
+    "english_words": ["love"],
+    "part_of_speech": "noun",
+    "transliteration": "agape"
+  },
+  "agapao": {
+    "strong": "G25",
+    "meaning": "to love, especially divine love",
+    "english_words": ["love", "loved"],
+    "part_of_speech": "verb",
+    "transliteration": "agapao"
+  },
+  "pistis": {
+    "strong": "G4102",
+    "meaning": "faith, belief, trust, confidence",
+    "english_words": ["faith", "belief"],
+    "part_of_speech": "noun",
+    "transliteration": "pistis"
+  },
+  "pisteuo": {
+    "strong": "G4100",
+    "meaning": "to believe, have faith, trust",
+    "english_words": ["believe", "believed", "believing"],
+    "part_of_speech": "verb",
+    "transliteration": "pisteuo"
+  },
+  "theos": {
+    "strong": "G2316",
+    "meaning": "God, deity, divine being",
+    "english_words": ["God", "god"],
+    "part_of_speech": "noun",
+    "transliteration": "theos"
+  },
+  "christos": {
+    "strong": "G5547",
+    "meaning": "anointed one, Christ, Messiah",
+    "english_words": ["Christ", "anointed"],
+    "part_of_speech": "noun",
+    "transliteration": "christos"
+  },
+  "pneuma": {
+    "strong": "G4151",
+    "meaning": "spirit, wind, breath",
+    "english_words": ["spirit", "Spirit"],
+    "part_of_speech": "noun",
+    "transliteration": "pneuma"
+  },
+  "logos": {
+    "strong": "G3056",
+    "meaning": "word, speech, reason, account",
+    "english_words": ["word", "saying", "speech"],
+    "part_of_speech": "noun",
+    "transliteration": "logos"
+  },
+  "ktizo": {
+    "strong": "G2936",
+    "meaning": "to create, form, shape",
+    "english_words": ["create", "created", "creation"],
+    "part_of_speech": "verb",
+    "transliteration": "ktizo"
+  },
+  "ktisis": {
+    "strong": "G2937",
+    "meaning": "creation, creature, created thing",
+    "english_words": ["creation", "creature"],
+    "part_of_speech": "noun",
+    "transliteration": "ktisis"
+  },
+  "poieo": {
+    "strong": "G4160",
+    "meaning": "to make, do, cause, create",
+    "english_words": ["make", "do", "made", "done", "create"],
+    "part_of_speech": "verb",
+    "transliteration": "poieo"
+  },
+  "sozo": {
+    "strong": "G4982",
+    "meaning": "to save, deliver, make whole",
+    "english_words": ["save", "saved", "salvation"],
+    "part_of_speech": "verb",
+    "transliteration": "sozo"
+  },
+  "soteria": {
+    "strong": "G4991",
+    "meaning": "salvation, deliverance, safety",
+    "english_words": ["salvation"],
+    "part_of_speech": "noun",
+    "transliteration": "soteria"
+  },
+  "charis": {
+    "strong": "G5485",
+    "meaning": "grace, favor, kindness",
+    "english_words": ["grace", "favor"],
+    "part_of_speech": "noun",
+    "transliteration": "charis"
+  },
+  "eirene": {
+    "strong": "G1515",
+    "meaning": "peace, harmony, tranquility",
+    "english_words": ["peace"],
+    "part_of_speech": "noun",
+    "transliteration": "eirene"
+  },
+  "doxa": {
+    "strong": "G1391",
+    "meaning": "glory, honor, praise, magnificence",
+    "english_words": ["glory", "glorious"],
+    "part_of_speech": "noun",
+    "transliteration": "doxa"
+  },
+  "aletheia": {
+    "strong": "G225",
+    "meaning": "truth, reality, sincerity",
+    "english_words": ["truth", "true"],
+    "part_of_speech": "noun",
+    "transliteration": "aletheia"
+  },
+  "dikaiosyne": {
+    "strong": "G1343",
+    "meaning": "righteousness, justice",
+    "english_words": ["righteousness", "righteous"],
+    "part_of_speech": "noun",
+    "transliteration": "dikaiosyne"
+  },
+  "hagios": {
+    "strong": "G40",
+    "meaning": "holy, sacred, set apart",
+    "english_words": ["holy", "saint", "sanctified"],
+    "part_of_speech": "adjective",
+    "transliteration": "hagios"
+  },
+  "ecclesia": {
+    "strong": "G1577",
+    "meaning": "church, assembly, congregation",
+    "english_words": ["church"],
+    "part_of_speech": "noun",
+    "transliteration": "ecclesia"
+  },
+  "angelos": {
+    "strong": "G32",
+    "meaning": "messenger, angel",
+    "english_words": ["angel", "messenger"],
+    "part_of_speech": "noun",
+    "transliteration": "angelos"
+  },
+  "basileia": {
+    "strong": "G932",
+    "meaning": "kingdom, royal power, reign",
+    "english_words": ["kingdom"],
+    "part_of_speech": "noun",
+    "transliteration": "basileia"
+  },
+  "thanatos": {
+    "strong": "G2288",
+    "meaning": "death, dying",
+    "english_words": ["death", "die", "dead"],
+    "part_of_speech": "noun",
+    "transliteration": "thanatos"
+  },
+  "zoe": {
+    "strong": "G2222",
+    "meaning": "life, living, lifetime",
+    "english_words": ["life", "living"],
+    "part_of_speech": "noun",
+    "transliteration": "zoe"
+  },
+  "sarx": {
+    "strong": "G4561",
+    "meaning": "flesh, body, human nature",
+    "english_words": ["flesh", "body"],
+    "part_of_speech": "noun",
+    "transliteration": "sarx"
+  },
+  "kardia": {
+    "strong": "G2588",
+    "meaning": "heart, mind, character",
+    "english_words": ["heart"],
+    "part_of_speech": "noun",
+    "transliteration": "kardia"
+  },
+  "nous": {
+    "strong": "G3563",
+    "meaning": "mind, understanding, reason",
+    "english_words": ["mind"],
+    "part_of_speech": "noun",
+    "transliteration": "nous"
+  },
+  "psyche": {
+    "strong": "G5590",
+    "meaning": "soul, life, self",
+    "english_words": ["soul", "life"],
+    "part_of_speech": "noun",
+    "transliteration": "psyche"
+  },
+  "hamartia": {
+    "strong": "G266",
+    "meaning": "sin, offense, wrongdoing",
+    "english_words": ["sin"],
+    "part_of_speech": "noun",
+    "transliteration": "hamartia"
+  },
+  "aphesis": {
+    "strong": "G859",
+    "meaning": "forgiveness, remission, release",
+    "english_words": ["forgiveness", "forgive"],
+    "part_of_speech": "noun",
+    "transliteration": "aphesis"
+  },
+  "elpis": {
+    "strong": "G1680",
+    "meaning": "hope, expectation, confidence",
+    "english_words": ["hope"],
+    "part_of_speech": "noun",
+    "transliteration": "elpis"
+  },
+  "kata": {
+    "strong": "G2596",
+    "meaning": "according to, down, against",
+    "english_words": ["according", "after"],
+    "part_of_speech": "preposition",
+    "transliteration": "kata"
+  },
+  "en": {
+    "strong": "G1722",
+    "meaning": "in, on, at, by, with",
+    "english_words": ["in", "with", "by"],
+    "part_of_speech": "preposition",
+    "transliteration": "en"
+  },
+  "ek": {
+    "strong": "G1537",
+    "meaning": "out of, from, by, away from",
+    "english_words": ["from", "out", "of"],
+    "part_of_speech": "preposition",
+    "transliteration": "ek"
+  },
+  "pros": {
+    "strong": "G4314",
+    "meaning": "to, toward, with, for",
+    "english_words": ["to", "unto", "toward"],
+    "part_of_speech": "preposition",
+    "transliteration": "pros"
+  },
+  "meta": {
+    "strong": "G3326",
+    "meaning": "with, after, behind",
+    "english_words": ["with", "after"],
+    "part_of_speech": "preposition",
+    "transliteration": "meta"
+  },
+  "dia": {
+    "strong": "G1223",
+    "meaning": "through, because of, by means of",
+    "english_words": ["through", "by", "because"],
+    "part_of_speech": "preposition",
+    "transliteration": "dia"
+  },
+  "kyrios": {
+    "strong": "G2962",
+    "meaning": "lord, master, owner",
+    "english_words": ["Lord", "lord", "master"],
+    "part_of_speech": "noun",
+    "transliteration": "kyrios"
+  },
+  "pater": {
+    "strong": "G3962",
+    "meaning": "father, ancestor",
+    "english_words": ["Father", "father"],
+    "part_of_speech": "noun",
+    "transliteration": "pater"
+  },
+  "huios": {
+    "strong": "G5207",
+    "meaning": "son, child, descendant",
+    "english_words": ["Son", "son", "child"],
+    "part_of_speech": "noun",
+    "transliteration": "huios"
+  },
+  "anthropos": {
+    "strong": "G444",
+    "meaning": "man, human being, person",
+    "english_words": ["man", "men", "person"],
+    "part_of_speech": "noun",
+    "transliteration": "anthropos"
+  },
+  "gyne": {
+    "strong": "G1135",
+    "meaning": "woman, wife",
+    "english_words": ["woman", "wife"],
+    "part_of_speech": "noun",
+    "transliteration": "gyne"
+  },
+  "teknon": {
+    "strong": "G5043",
+    "meaning": "child, offspring, descendant",
+    "english_words": ["child", "children"],
+    "part_of_speech": "noun",
+    "transliteration": "teknon"
+  },
+  "adelphos": {
+    "strong": "G80",
+    "meaning": "brother, fellow believer",
+    "english_words": ["brother", "brethren"],
+    "part_of_speech": "noun",
+    "transliteration": "adelphos"
+  },
+  "kosmos": {
+    "strong": "G2889",
+    "meaning": "world, universe, mankind",
+    "english_words": ["world"],
+    "part_of_speech": "noun",
+    "transliteration": "kosmos"
+  },
+  "aion": {
+    "strong": "G165",
+    "meaning": "age, eternity, world",
+    "english_words": ["age", "world", "ever"],
+    "part_of_speech": "noun",
+    "transliteration": "aion"
+  },
+  "hemera": {
+    "strong": "G2250",
+    "meaning": "day, time, period",
+    "english_words": ["day", "daily"],
+    "part_of_speech": "noun",
+    "transliteration": "hemera"
+  },
+  "kairos": {
+    "strong": "G2540",
+    "meaning": "time, season, opportunity",
+    "english_words": ["time", "season"],
+    "part_of_speech": "noun",
+    "transliteration": "kairos"
+  },
+  "chronos": {
+    "strong": "G5550",
+    "meaning": "time, period, duration",
+    "english_words": ["time"],
+    "part_of_speech": "noun",
+    "transliteration": "chronos"
+  },
+  "topos": {
+    "strong": "G5117",
+    "meaning": "place, location, region",
+    "english_words": ["place"],
+    "part_of_speech": "noun",
+    "transliteration": "topos"
+  },
+  "ouranos": {
+    "strong": "G3772",
+    "meaning": "heaven, sky, air",
+    "english_words": ["heaven", "heavenly"],
+    "part_of_speech": "noun",
+    "transliteration": "ouranos"
+  },
+  "ge": {
+    "strong": "G1093",
+    "meaning": "earth, land, ground",
+    "english_words": ["earth", "land", "ground"],
+    "part_of_speech": "noun",
+    "transliteration": "ge"
+  },
+  "phonos": {
+    "strong": "G5408",
+    "meaning": "murder, slaughter",
+    "english_words": ["murder"],
+    "part_of_speech": "noun",
+    "transliteration": "phonos"
+  }
+}
