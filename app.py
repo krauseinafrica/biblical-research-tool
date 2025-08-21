@@ -278,115 +278,137 @@ def main():
     with col2:
         st.header("Research Results")
         
-        if st.session_state.results:
-            # Display results with enhanced formatting
+def parse_and_display_json_results(json_text: str):
+    """Parse JSON results and display them in formatted containers"""
+    try:
+        import json
+        
+        # Clean the JSON text - remove any non-JSON content
+        json_start = json_text.find('{')
+        json_end = json_text.rfind('}') + 1
+        
+        if json_start == -1 or json_end == 0:
+            # Fallback to original display if no JSON found
+            st.markdown(json_text)
+            return
+        
+        clean_json = json_text[json_start:json_end]
+        data = json.loads(clean_json)
+        
+        # Display title
+        if 'title' in data:
+            st.markdown(f"## {data['title']}")
+        
+        # Define section mappings
+        section_configs = {
+            'key_verses': {'icon': '📖', 'color': 'blue', 'title': 'Key Bible Verses'},
+            'verse_context': {'icon': '📖', 'color': 'blue', 'title': 'Verse in Context'},
+            'main_verse': {'icon': '📖', 'color': 'blue', 'title': 'Main Verse'},
+            'connections': {'icon': '🔗', 'color': 'orange', 'title': 'Connections'},
+            'historical_background': {'icon': '🏛️', 'color': 'green', 'title': 'Historical Background'},
+            'theological_themes': {'icon': '⛪', 'color': 'indigo', 'title': 'Theological Themes'},
+            'cross_references': {'icon': '🔗', 'color': 'orange', 'title': 'Cross References'},
+            'key_cross_references': {'icon': '🔗', 'color': 'orange', 'title': 'Key Cross References'},
+            'thematic_connections': {'icon': '🔗', 'color': 'orange', 'title': 'Thematic Connections'},
+            'reflection_questions': {'icon': '💭', 'color': 'purple', 'title': 'Reflection Questions'},
+            'practical_application': {'icon': '🎯', 'color': 'red', 'title': 'Practical Application'},
+            'application_principles': {'icon': '🎯', 'color': 'red', 'title': 'Application Principles'},
+            'greek_hebrew_insights': {'icon': '🔤', 'color': 'gold', 'title': 'Greek/Hebrew Insights'},
+            'additional_study': {'icon': '📚', 'color': 'cyan', 'title': 'Additional Study'},
+            'opening_questions': {'icon': '🚀', 'color': 'green', 'title': 'Opening Questions'},
+            'observation_questions': {'icon': '👁️', 'color': 'blue', 'title': 'Observation Questions'},
+            'interpretation_questions': {'icon': '🧠', 'color': 'purple', 'title': 'Interpretation Questions'},
+            'application_questions': {'icon': '🎯', 'color': 'red', 'title': 'Application Questions'},
+            'discussion_questions': {'icon': '👥', 'color': 'orange', 'title': 'Discussion Questions'},
+            'prayer_points': {'icon': '🙏', 'color': 'violet', 'title': 'Prayer Points'},
+            'suggested_study_path': {'icon': '🛤️', 'color': 'brown', 'title': 'Suggested Study Path'}
+        }
+        
+        # Display each section
+        for key, value in data.items():
+            if key == 'title':
+                continue
+                
+            config = section_configs.get(key, {'icon': '📝', 'color': 'gray', 'title': key.replace('_', ' ').title()})
             
-            # Parse and format the results
-            result_text = st.session_state.results
-            
-            # Split the content into sections based on numbered lists or headers
-            sections = []
-            current_section = ""
-            lines = result_text.split('\n')
-            
-            for line in lines:
-                if line.strip():
-                    # Check if this is a main section header
-                    if (line.strip().endswith(':') and 
-                        any(keyword in line.upper() for keyword in 
-                            ['KEY BIBLE VERSES', 'CONTEXT', 'CONNECTIONS', 'REFLECTION QUESTIONS', 
-                             'PRACTICAL APPLICATION', 'ADDITIONAL VERSES', 'CROSS-REFERENCES',
-                             'HISTORICAL BACKGROUND', 'THEOLOGICAL THEMES', 'APPLICATION PRINCIPLES',
-                             'GREEK/HEBREW INSIGHTS', 'GREEK', 'HEBREW'])):
-                        if current_section:
-                            sections.append(current_section)
-                        current_section = line + '\n'
-                    else:
-                        current_section += line + '\n'
+            with st.container():
+                st.markdown(f"""
+                <div style="
+                    border-left: 4px solid {config['color']};
+                    padding: 15px;
+                    margin: 10px 0;
+                    background-color: rgba(128, 128, 128, 0.1);
+                    border-radius: 5px;
+                ">
+                <h4 style="color: {config['color']}; margin-top: 0;">{config['icon']} {config['title']}</h4>
+                <div style="margin-left: 10px;">
+                """, unsafe_allow_html=True)
+                
+                # Format content based on type
+                if isinstance(value, list):
+                    for item in value:
+                        if isinstance(item, dict):
+                            format_dict_item(item)
+                        else:
+                            st.markdown(f"• {item}")
+                elif isinstance(value, dict):
+                    format_dict_item(value)
                 else:
-                    current_section += '\n'
-            
-            if current_section:
-                sections.append(current_section)
-            
-            # Display each section in a container
-            for i, section in enumerate(sections):
-                if section.strip():
-                    # Determine section type and icon
-                    section_lower = section.lower()
-                    if 'key bible verses' in section_lower:
-                        icon = "📖"
-                        color = "blue"
-                    elif 'context' in section_lower:
-                        icon = "🏛️"
-                        color = "green"
-                    elif 'connections' in section_lower or 'cross-references' in section_lower:
-                        icon = "🔗"
-                        color = "orange"
-                    elif 'reflection' in section_lower or 'questions' in section_lower:
-                        icon = "💭"
-                        color = "purple"
-                    elif 'practical application' in section_lower or 'application' in section_lower:
-                        icon = "🎯"
-                        color = "red"
-                    elif 'additional verses' in section_lower:
-                        icon = "📚"
-                        color = "cyan"
-                    elif 'greek' in section_lower or 'hebrew' in section_lower:
-                        icon = "🔤"
-                        color = "gold"
-                    elif 'theological themes' in section_lower:
-                        icon = "⛪"
-                        color = "indigo"
-                    elif 'historical background' in section_lower:
-                        icon = "🏺"
-                        color = "brown"
-                    else:
-                        icon = "📝"
-                        color = "gray"
-                    
-                    # Create container with colored border
-                    with st.container():
-                        st.markdown(f"""
-                        <div style="
-                            border-left: 4px solid #{color};
-                            padding: 15px;
-                            margin: 10px 0;
-                            background-color: rgba(128, 128, 128, 0.1);
-                            border-radius: 5px;
-                        ">
-                        <h4 style="color: #{color}; margin-top: 0;">{icon} {section.split(':')[0] if ':' in section else 'Content'}</h4>
-                        <div style="margin-left: 10px;">
-                        """, unsafe_allow_html=True)
-                        
-                        # Process the content to add verse references to questions
-                        content = ':'.join(section.split(':')[1:]).strip() if ':' in section else section
-                        
-                        # If this is a reflection/questions section, enhance with AI-generated verse references
-                        if 'reflection' in section_lower or 'questions' in section_lower:
-                            content = enhance_questions_with_verses_ai(
-                                content, 
-                                f"{research_type}: {user_input}", 
-                                claude_api_key
-                            )
-                        
-                        st.markdown(content)
-                        st.markdown("</div></div>", unsafe_allow_html=True)
-            
-            # If no clear sections were found, display as-is but in a container
-            if not sections:
-                with st.container():
-                    st.markdown(f"""
-                    <div style="
-                        border-left: 4px solid #1f77b4;
-                        padding: 15px;
-                        margin: 10px 0;
-                        background-color: rgba(31, 119, 180, 0.1);
-                        border-radius: 5px;
-                    ">
-                    """, unsafe_allow_html=True)
-                    st.markdown(result_text)
-                    st.markdown("</div>", unsafe_allow_html=True)
+                    st.markdown(str(value))
+                
+                st.markdown("</div></div>", unsafe_allow_html=True)
+                
+    except json.JSONDecodeError as e:
+        st.error("Error parsing research results. Displaying raw output:")
+        st.markdown(json_text)
+    except Exception as e:
+        st.error(f"Error displaying results: {e}")
+        st.markdown(json_text)
+
+def format_dict_item(item):
+    """Format a dictionary item for display"""
+    if 'question' in item:
+        # Format questions with verse references
+        question = item['question']
+        if 'verse_references' in item and item['verse_references']:
+            refs = ', '.join(item['verse_references'])
+            question += f" *(See {refs} for insights)*"
+        st.markdown(f"**Q:** {question}")
+        
+        if 'study_note' in item:
+            st.markdown(f"*{item['study_note']}*")
+    
+    elif 'reference' in item:
+        # Format verse references
+        st.markdown(f"**{item['reference']}**")
+        if 'text' in item:
+            st.markdown(f"*{item['text']}*")
+        if 'context' in item:
+            st.markdown(f"{item['context']}")
+        if 'explanation' in item:
+            st.markdown(f"{item['explanation']}")
+    
+    elif 'original' in item:
+        # Format Greek/Hebrew words
+        st.markdown(f"**{item['original']}** ({item.get('transliteration', 'N/A')})")
+        if 'meaning' in item:
+            st.markdown(f"Meaning: {item['meaning']}")
+        if 'usage_examples' in item:
+            examples = ', '.join(item['usage_examples'])
+            st.markdown(f"Used in: {examples}")
+    
+    else:
+        # Generic formatting for other dictionary items
+        for key, value in item.items():
+            if isinstance(value, list):
+                value_str = ', '.join(map(str, value))
+            else:
+                value_str = str(value)
+            st.markdown(f"**{key.replace('_', ' ').title()}:** {value_str}")
+
+        if st.session_state.results:
+            # Parse and display JSON results
+            parse_and_display_json_results(st.session_state.results)
             
             # Option to refine results
             st.subheader("Refine Results")
