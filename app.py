@@ -178,7 +178,7 @@ if 'request_count' not in st.session_state:
 
 def main():
     st.title("📖 Biblical Research Tool")
-    st.markdown("*A resource for deeper theological understanding and personal study using theological frameworks built off of the Southern Baptist Faith and Message*")
+    st.markdown("*A resource for deeper theological understanding and personal study*")
     
     # Get API key from secrets
     try:
