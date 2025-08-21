@@ -130,7 +130,7 @@ def generate_research_with_claude(prompt: str, api_key: str) -> str:
         """
         
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",
+            model="claude-3-5-sonnet-20241022",
             max_tokens=2000,
             system=system_message,
             messages=[
@@ -152,7 +152,7 @@ if 'results' not in st.session_state:
 
 def main():
     st.title("📖 Biblical Research Tool")
-    st.markdown("*A resource for deeper theological understanding and personal study*")
+    st.markdown("*A resource for deeper theological understanding and personal study using theological frameworks built off of the Southern Baptist Faith and Message*")
     
     # Get API key from secrets
     try:
