@@ -8,91 +8,237 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         "Deep Theological": "Provide thorough theological analysis with detailed cross-references and doctrinal implications."
     }
     
-    greek_hebrew_addon = """
-    
-    IMPORTANT: Include a dedicated "GREEK/HEBREW INSIGHTS" section with:
-    - Key original language words with transliterations (e.g., Greek: agape, Hebrew: hesed)
-    - Meaning and nuance of original words that may be lost in translation
-    - How these words are used in other significant Bible passages
-    - Theological significance of the original language choices
-    - Practical implications for understanding and application
-    - Suggestions for further word study using tools like Strong's Concordance or Blue Letter Bible
-    
-    Format this as a clear, separate section that helps users understand the richness of the original languages.
-    """ if include_greek_hebrew else ""
+    greek_hebrew_section = """
+        "greek_hebrew_insights": {
+            "key_words": [
+                {
+                    "original": "original word",
+                    "transliteration": "pronunciation",
+                    "meaning": "detailed meaning",
+                    "usage_examples": ["verse reference 1", "verse reference 2"],
+                    "theological_significance": "why this matters"
+                }
+            ],
+            "study_resources": ["Strong's Concordance", "Blue Letter Bible", "specific recommendations"]
+        },""" if include_greek_hebrew else ""
     
     # Research type specific prompts
     if research_type == "Topical Study":
         return f"""
         Conduct a topical Bible study on: {user_input}
         
-        Please provide:
-        1. KEY BIBLE VERSES: List relevant verses with full text (ESV)
-        2. CONTEXT: Brief context for each key verse
-        3. CONNECTIONS: How these verses connect to each other thematically
-        4. REFLECTION QUESTIONS: Thoughtful questions that include specific Bible verse references for further study (format: "Question? (See [verse reference] for insights)")
-        5. PRACTICAL APPLICATION: Concrete application points with supporting verses
-        6. ADDITIONAL VERSES FOR STUDY: Suggested verses for deeper exploration
-        {greek_hebrew_addon}
-        
         {depth_instruction[depth_level]}
         
-        Format your response with clear section headers. For reflection questions, always include specific Bible verse references that help answer each question.
+        Please respond with ONLY valid JSON in this exact format:
+        
+        {{
+            "title": "TOPICAL BIBLE STUDY: {user_input.upper()}",
+            "key_verses": [
+                {{
+                    "reference": "Book Chapter:Verse",
+                    "text": "Full verse text (ESV)",
+                    "context": "Brief context explanation"
+                }}
+            ],
+            "connections": [
+                "Connection point 1 between verses",
+                "Connection point 2 between themes"
+            ],
+            "reflection_questions": [
+                {{
+                    "question": "Thoughtful question text?",
+                    "verse_references": ["Reference 1", "Reference 2"],
+                    "study_note": "See [references] for insights"
+                }}
+            ],
+            "practical_application": [
+                {{
+                    "principle": "Application principle",
+                    "supporting_verses": ["Reference 1", "Reference 2"],
+                    "action_step": "Specific action to take"
+                }}
+            ],{greek_hebrew_section}
+            "additional_study": [
+                {{
+                    "reference": "Verse reference",
+                    "reason": "Why this verse is relevant for further study"
+                }}
+            ]
+        }}
+        
+        IMPORTANT: 
+        - Return ONLY the JSON, no other text
+        - Ensure all JSON is valid and properly formatted
+        - Include all required sections
+        - Each reflection question must include specific verse references
         """
     
     elif research_type == "Verse Analysis":
         return f"""
         Provide a detailed analysis of: {user_input}
         
-        Please include:
-        1. VERSE IN CONTEXT: The verse(s) with surrounding context (ESV)
-        2. HISTORICAL BACKGROUND: Historical and cultural background
-        3. THEOLOGICAL THEMES: Key theological themes and doctrines
-        4. CROSS-REFERENCES: Related passages with explanations
-        5. REFLECTION QUESTIONS: Personal study questions with specific verse references for answers (format: "Question? (See [verse reference] for insights)")
-        6. APPLICATION PRINCIPLES: How to apply this passage today
-        
         {depth_instruction[depth_level]}
-        {greek_hebrew_addon}
         
-        Help the reader understand both the immediate context and broader biblical connections. Include specific verse references with all reflection questions.
+        Please respond with ONLY valid JSON in this exact format:
+        
+        {{
+            "title": "VERSE ANALYSIS: {user_input}",
+            "verse_context": {{
+                "main_verse": "Full verse text (ESV)",
+                "surrounding_context": "Context explanation",
+                "book_chapter_context": "Broader context within the book"
+            }},
+            "historical_background": {{
+                "time_period": "When this was written",
+                "cultural_context": "Cultural background",
+                "audience": "Original audience"
+            }},
+            "theological_themes": [
+                {{
+                    "theme": "Major theological theme",
+                    "explanation": "How this verse relates to the theme",
+                    "related_verses": ["Reference 1", "Reference 2"]
+                }}
+            ],
+            "cross_references": [
+                {{
+                    "reference": "Related verse reference",
+                    "connection": "How it connects to the main verse",
+                    "explanation": "Why this connection matters"
+                }}
+            ],
+            "reflection_questions": [
+                {{
+                    "question": "Personal study question?",
+                    "verse_references": ["Reference 1", "Reference 2"],
+                    "study_note": "See [references] for insights"
+                }}
+            ],{greek_hebrew_section}
+            "application_principles": [
+                {{
+                    "principle": "How to apply this today",
+                    "supporting_verses": ["Reference 1"],
+                    "practical_steps": ["Specific action 1", "Specific action 2"]
+                }}
+            ]
+        }}
+        
+        IMPORTANT: Return ONLY the JSON, no other text
         """
     
     elif research_type == "Study Guide Builder":
         return f"""
         Create a study guide for: {user_input}
         
-        Structure the guide with:
-        1. OPENING QUESTIONS: Questions to engage with the text initially
-        2. OBSERVATION QUESTIONS: What does the text say? (Include verse references for answers)
-        3. INTERPRETATION QUESTIONS: What does it mean? (Include verse references for insights)
-        4. APPLICATION QUESTIONS: How should I respond? (Include verse references for guidance)
-        5. CROSS-REFERENCE PASSAGES: Related passages to explore with explanations
-        6. DISCUSSION QUESTIONS: Questions for group study with supporting verses
-        7. PRAYER POINTS: Prayer topics based on the passage
-        
         {depth_instruction[depth_level]}
-        {greek_hebrew_addon}
         
-        Make it suitable for both individual and group Bible study. Format questions as: "Question? (See [verse reference] for insights)"
+        Please respond with ONLY valid JSON in this exact format:
+        
+        {{
+            "title": "STUDY GUIDE: {user_input}",
+            "opening_questions": [
+                {{
+                    "question": "Engaging opening question?",
+                    "purpose": "Why this question matters"
+                }}
+            ],
+            "observation_questions": [
+                {{
+                    "question": "What does the text say?",
+                    "verse_references": ["Reference 1"],
+                    "focus": "What to look for"
+                }}
+            ],
+            "interpretation_questions": [
+                {{
+                    "question": "What does it mean?",
+                    "verse_references": ["Reference 1", "Reference 2"],
+                    "study_note": "See [references] for insights"
+                }}
+            ],
+            "application_questions": [
+                {{
+                    "question": "How should I respond?",
+                    "verse_references": ["Reference 1"],
+                    "guidance": "Practical guidance"
+                }}
+            ],
+            "cross_references": [
+                {{
+                    "reference": "Related passage",
+                    "explanation": "How it connects"
+                }}
+            ],{greek_hebrew_section}
+            "discussion_questions": [
+                {{
+                    "question": "Group discussion question?",
+                    "verse_references": ["Reference 1"],
+                    "discussion_points": ["Point 1", "Point 2"]
+                }}
+            ],
+            "prayer_points": [
+                "Prayer topic based on the passage",
+                "Another prayer focus"
+            ]
+        }}
+        
+        IMPORTANT: Return ONLY the JSON, no other text
         """
     
     else:  # Cross-Reference Explorer
         return f"""
         Explore cross-references for: {user_input}
         
-        Please provide:
-        1. MAIN VERSE: The verse in context (ESV)
-        2. KEY CROSS-REFERENCES: 5-7 key cross-references with brief explanations
-        3. THEMATIC CONNECTIONS: How these passages relate thematically
-        4. REFLECTION QUESTIONS: Questions about connections with verse references for deeper study
-        5. SUGGESTED STUDY PATH: Recommended order for studying the references
-        6. THEOLOGICAL THEMES: Key themes that emerge across the passages
-        
         {depth_instruction[depth_level]}
-        {greek_hebrew_addon}
         
-        Help the reader see the interconnected nature of Scripture. Include verse references with all reflection questions.
+        Please respond with ONLY valid JSON in this exact format:
+        
+        {{
+            "title": "CROSS-REFERENCE STUDY: {user_input}",
+            "main_verse": {{
+                "reference": "{user_input}",
+                "text": "Full verse text (ESV)",
+                "context": "Brief context"
+            }},
+            "key_cross_references": [
+                {{
+                    "reference": "Related verse reference",
+                    "text": "Verse text (ESV)",
+                    "connection_type": "thematic/verbal/conceptual",
+                    "explanation": "How it connects to main verse"
+                }}
+            ],
+            "thematic_connections": [
+                {{
+                    "theme": "Connecting theme",
+                    "verses": ["Reference 1", "Reference 2"],
+                    "explanation": "How these verses develop the theme"
+                }}
+            ],
+            "reflection_questions": [
+                {{
+                    "question": "How do these passages relate?",
+                    "verse_references": ["Reference 1", "Reference 2"],
+                    "study_note": "See [references] for insights"
+                }}
+            ],{greek_hebrew_section}
+            "suggested_study_path": [
+                {{
+                    "step": 1,
+                    "reference": "First verse to study",
+                    "focus": "What to focus on"
+                }}
+            ],
+            "theological_themes": [
+                {{
+                    "theme": "Major theme",
+                    "verses": ["Reference 1", "Reference 2"],
+                    "significance": "Why this theme matters"
+                }}
+            ]
+        }}
+        
+        IMPORTANT: Return ONLY the JSON, no other text
         """
 
 def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
