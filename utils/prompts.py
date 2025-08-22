@@ -63,6 +63,12 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
                     "reference": "Verse reference",
                     "reason": "Why this verse is relevant for further study"
                 }}
+            ],
+            "cross_reference_keywords": [
+                "keyword1",
+                "keyword2", 
+                "keyword3",
+                "keyword4"
             ]
         }}
         
@@ -71,6 +77,7 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         - Ensure all JSON is valid and properly formatted
         - Include all required sections
         - Each reflection question must include specific verse references
+        - cross_reference_keywords should be 3-5 key theological words for Scripture lookup
         """
     
     elif research_type == "Verse Analysis":
@@ -120,10 +127,18 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
                     "supporting_verses": ["Reference 1"],
                     "practical_steps": ["Specific action 1", "Specific action 2"]
                 }}
+            ],
+            "cross_reference_keywords": [
+                "keyword1",
+                "keyword2", 
+                "keyword3",
+                "keyword4"
             ]
         }}
         
-        IMPORTANT: Return ONLY the JSON, no other text
+        IMPORTANT: 
+        - Return ONLY the JSON, no other text
+        - cross_reference_keywords should be 3-5 key words from this verse for Scripture-wide lookup
         """
     
     elif research_type == "Study Guide Builder":
@@ -179,10 +194,17 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
             "prayer_points": [
                 "Prayer topic based on the passage",
                 "Another prayer focus"
+            ],
+            "cross_reference_keywords": [
+                "keyword1",
+                "keyword2", 
+                "keyword3"
             ]
         }}
         
-        IMPORTANT: Return ONLY the JSON, no other text
+        IMPORTANT: 
+        - Return ONLY the JSON, no other text
+        - cross_reference_keywords should be 3-5 key words for broader Scripture study
         """
     
     else:  # Cross-Reference Explorer
@@ -235,11 +257,39 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
                     "verses": ["Reference 1", "Reference 2"],
                     "significance": "Why this theme matters"
                 }}
+            ],
+            "cross_reference_keywords": [
+                "keyword1",
+                "keyword2", 
+                "keyword3"
             ]
         }}
         
-        IMPORTANT: Return ONLY the JSON, no other text
+        IMPORTANT: 
+        - Return ONLY the JSON, no other text
+        - cross_reference_keywords should be 3-5 key words for expanded cross-reference lookup
         """
+
+def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
+    """Generate prompt for AI to enhance questions with relevant Bible verse references"""
+    return f"""
+    Please enhance the following biblical study content by adding specific, relevant Bible verse references to any questions that don't already have them.
+
+    INSTRUCTIONS:
+    - Look for questions in the content that would benefit from specific Bible verse references
+    - Add verse references in this format: "Question? (See [specific verse references] for insights)"
+    - Only suggest verses that are directly relevant and helpful for answering the specific question
+    - Ensure all verse references are accurate and from a conservative theological perspective
+    - Don't change questions that already have verse references
+    - Focus on well-known, clear passages that address the question topic
+
+    RESEARCH CONTEXT: {research_context}
+
+    CONTENT TO ENHANCE:
+    {content}
+
+    Please return the enhanced content with appropriate verse references added to questions.
+    """
 
 def get_enhanced_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
     """Enhanced research prompt that identifies key words for API lookup"""
