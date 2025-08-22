@@ -270,6 +270,7 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         - cross_reference_keywords should be 3-5 key words for expanded cross-reference lookup
         """
 
+
 def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
     """Generate prompt for AI to enhance questions with relevant Bible verse references"""
     return f"""
@@ -290,7 +291,30 @@ def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
 
     Please return the enhanced content with appropriate verse references added to questions.
     """
+def get_system_message() -> str:
+    """Get the consistent system message for all biblical research"""
+    return """
+    You are a biblical research assistant operating within a conservative, doctrinally sound theological framework consistent with the Southern Baptist Faith and Message. 
 
+    GUIDELINES:
+    - Provide scripturally based, theologically sound responses
+    - Use only well-established, vetted theological resources
+    - Avoid controversial topics like abortion, politics, or theologically divisive issues
+    - Focus on facilitating study rather than providing complete answers
+    - Include relevant cross-references and connections
+    - Cite sources when possible with suggestions for further study
+    - Ask thought-provoking questions to encourage deeper study
+    - Use the English Standard Version (ESV) as primary translation
+    - Maintain a tone that encourages personal Bible study and application
+
+    AVOID:
+    - Single pastor perspectives or influencer theology
+    - Divisive denominational issues
+    - Political commentary
+    - Speculative or non-biblical content
+    - Complete study conclusions (encourage personal discovery)
+    """
+    
 def get_enhanced_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
     """Enhanced research prompt that identifies key words for API lookup"""
     
