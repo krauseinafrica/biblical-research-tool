@@ -241,6 +241,54 @@ def get_research_prompt(research_type: str, user_input: str, depth_level: str, i
         IMPORTANT: Return ONLY the JSON, no other text
         """
 
+def get_enhanced_research_prompt(research_type: str, user_input: str, depth_level: str, include_greek_hebrew: bool) -> str:
+    """Enhanced research prompt that identifies key words for API lookup"""
+    
+    # Your existing prompt logic, but add this instruction to ALL prompts:
+    api_instruction = """
+    
+    IMPORTANT: At the end of your response, include a section called "KEY WORDS FOR CROSS-REFERENCE" 
+    that lists 3-5 key theological or thematic words from this study that would be valuable 
+    to search for throughout Scripture. Format as: KEY WORDS: word1, word2, word3, word4
+    """
+    
+    # Add api_instruction to all your existing prompts
+    if research_type == "Topical Study":
+        return f"""
+        Conduct a topical Bible study on: {user_input}
+        
+        Please provide clearly formatted sections:
+        1. KEY BIBLE VERSES: List relevant verses with full text (ESV)
+        2. CONTEXT: Brief context for each key verse
+        3. CONNECTIONS: How these verses connect to each other thematically
+        4. REFLECTION QUESTIONS: Thoughtful questions with specific Bible verse references
+        5. PRACTICAL APPLICATION: Concrete application points with supporting verses
+        6. ADDITIONAL VERSES FOR STUDY: Suggested verses for deeper exploration
+        
+        {depth_level} - Provide clear, accessible insights suitable for general Bible study.
+        {api_instruction}
+        """
+    
+    elif research_type == "Verse Analysis":
+        return f"""
+        Provide a detailed analysis of: {user_input}
+        
+        Please include clearly formatted sections:
+        1. VERSE IN CONTEXT: The verse(s) with surrounding context (ESV)
+        2. HISTORICAL BACKGROUND: Historical and cultural background
+        3. THEOLOGICAL THEMES: Key theological themes and doctrines
+        4. CROSS-REFERENCES: Related passages with explanations
+        5. REFLECTION QUESTIONS: Personal study questions with verse references
+        6. APPLICATION PRINCIPLES: How to apply this passage today
+        
+        {depth_level} - Provide clear, accessible insights suitable for general Bible study.
+        {api_instruction}
+        """
+    
+    # Continue with other research types...
+    return "Enhanced prompt with API integration"
+
+
 def get_verse_enhancement_prompt(content: str, research_context: str) -> str:
     """Generate prompt for AI to enhance questions with relevant Bible verse references"""
     return f"""
