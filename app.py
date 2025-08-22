@@ -4,6 +4,8 @@ import json
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import requests  # ADD THIS
+from urllib.parse import quote  # ADD THIS
 
 # Page configuration
 st.set_page_config(
@@ -11,6 +13,121 @@ st.set_page_config(
     page_icon="📖",
     layout="wide"
 )
+
+def search_bible_api(query, bible_version="ESV", limit=50):
+    """Universal Bible search function"""
+    try:
+        url = "https://api.biblesupersearch.com/api"
+        params = {
+            'query': query,
+            'bible': bible_version,
+            'format': 'json',
+            'limit': limit
+        }
+        
+        response = requests.get(url, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            return data.get('results', [])
+        else:
+            st.error(f"API Error: {response.status_code}")
+            return []
+            
+    except requests.RequestException as e:
+        st.error(f"Network error: {e}")
+        return []
+
+def search_strong_number(strong_number, book_filter=None, bible_version="ESV"):
+    """Search for Strong's number with optional book filter"""
+    query = f'strong:{strong_number}'
+    if book_filter:
+        query += f' book:{book_filter}'
+    
+    return search_bible_api(query, bible_version)
+
+def find_verse_cross_references(verse_reference, key_words, bible_version="ESV"):
+    """Find cross-references based on key words from a verse"""
+    cross_refs = {}
+    
+    for word in key_words:
+        # Search for each word throughout Scripture
+        results = search_bible_api(f'"{word}"', bible_version, limit=20)
+        
+        # Filter out the original verse
+        filtered_results = [r for r in results 
+                          if f"{r.get('book_name', '')} {r.get('chapter', '')}:{r.get('verse', '')}" != verse_reference]
+        
+        if filtered_results:
+            cross_refs[word] = filtered_results[:10]  # Limit to top 10
+    
+    return cross_refs
+
+def display_cross_reference_results(cross_refs, original_verse):
+    """Display cross-reference results in an organized way"""
+    if not cross_refs:
+        st.info("No cross-references found for the selected words.")
+        return
+    
+    st.subheader("🔗 Scripture Cross-References")
+    st.markdown(f"*Words from {original_verse} found throughout Scripture:*")
+    
+    for word, verses in cross_refs.items():
+        with st.expander(f"📖 '{word}' appears in {len(verses)} other verses", expanded=False):
+            # Separate Old and New Testament
+            ot_verses = []
+            nt_verses = []
+            
+            ot_books = {
+                "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+                "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", "1 Kings", "2 Kings",
+                "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther",
+                "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Songs",
+                "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel",
+                "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
+                "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
+            }
+            
+            for verse in verses:
+                book_name = verse.get('book_name', '')
+                if book_name in ot_books:
+                    ot_verses.append(verse)
+                else:
+                    nt_verses.append(verse)
+            
+            # Display Old Testament references
+            if ot_verses:
+                st.markdown("**📜 Old Testament:**")
+                for verse in ot_verses[:5]:  # Limit to 5
+                    reference = f"{verse.get('book_name', '')} {verse.get('chapter', '')}:{verse.get('verse', '')}"
+                    text = verse.get('text', '')[:150] + "..." if len(verse.get('text', '')) > 150 else verse.get('text', '')
+                    
+                    st.markdown(f"""
+                    <div style="margin: 5px 0; padding: 8px; border-left: 3px solid #8B4513; background-color: rgba(139, 69, 19, 0.1);">
+                    <strong>{reference}</strong><br>
+                    <em>"{text}"</em>
+                    </div>
+                    """, unsafe_allow_html=True)
+            
+            # Display New Testament references
+            if nt_verses:
+                st.markdown("**✝️ New Testament:**")
+                for verse in nt_verses[:5]:  # Limit to 5
+                    reference = f"{verse.get('book_name', '')} {verse.get('chapter', '')}:{verse.get('verse', '')}"
+                    text = verse.get('text', '')[:150] + "..." if len(verse.get('text', '')) > 150 else verse.get('text', '')
+                    
+                    st.markdown(f"""
+                    <div style="margin: 5px 0; padding: 8px; border-left: 3px solid #4169E1; background-color: rgba(65, 105, 225, 0.1);">
+                    <strong>{reference}</strong><br>
+                    <em>"{text}"</em>
+                    </div>
+                    """, unsafe_allow_html=True)
+            
+            # Bible Gateway search link
+            search_url = f"https://www.biblegateway.com/quicksearch/?search={quote(word)}&version=ESV"
+            st.markdown(f"🔍 [Search all '{word}' references on Bible Gateway]({search_url})")
+
+            
 
 def calculate_cost(input_tokens: int, output_tokens: int) -> float:
     """Calculate cost based on token usage for Claude 3.5 Haiku"""
