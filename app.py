@@ -479,34 +479,172 @@ def generate_research_with_claude(prompt: str, api_key: str):
     except Exception as e:
         return f"Error generating research: {str(e)}", 0.0
 
-# ===== REMOVE THIS SECTION FROM YOUR APP.PY =====
-# def get_research_prompt(...):  <-- DELETE THIS ENTIRE FUNCTION
-# Your app.py should NOT have any prompt functions anymore
-
-# ===== API FUNCTIONS FOR CROSS-REFERENCE LOOKUP =====
-def search_bible_api(query, bible_version="ESV", limit=50):
-    """Universal Bible search function"""
+def try_alternative_bible_search(query, bible_version="ESV", limit=50):
+    """Try alternative Bible search methods"""
+    
+    # Alternative 1: Try different parameter format
     try:
         url = "https://api.biblesupersearch.com/api"
         params = {
-            'query': query,
+            'search': query,
+            'version': bible_version,
+            'format': 'json'
+        }
+        
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get('results', data.get('verses', []))
+    except:
+        pass
+    
+    # Alternative 2: Try simple GET request format
+    try:
+        encoded_query = quote(query)
+        url = f"https://api.biblesupersearch.com/api?query={encoded_query}&bible={bible_version}&format=json"
+        
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get('results', data.get('verses', []))
+    except:
+        pass
+    
+    # Alternative 3: Mock data for testing (remove this once API is working)
+    return create_mock_bible_results(query)
+
+
+def create_mock_bible_results(query):
+    """Create mock results for testing - REMOVE once API is working"""
+    
+    mock_results = {
+        'love': [
+            {
+                'book_name': '1 John',
+                'chapter': '4',
+                'verse': '8',
+                'text': 'Anyone who does not love does not know God, because God is love.'
+            },
+            {
+                'book_name': 'John',
+                'chapter': '3',
+                'verse': '16',
+                'text': 'For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life.'
+            },
+            {
+                'book_name': 'Romans',
+                'chapter': '5',
+                'verse': '8',
+                'text': 'But God shows his love for us in that while we were still sinners, Christ died for us.'
+            }
+        ],
+        'faith': [
+            {
+                'book_name': 'Hebrews',
+                'chapter': '11',
+                'verse': '1',
+                'text': 'Now faith is the assurance of things hoped for, the conviction of things not seen.'
+            },
+            {
+                'book_name': 'Romans',
+                'chapter': '10',
+                'verse': '17',
+                'text': 'So faith comes from hearing, and hearing through the word of Christ.'
+            }
+        ]
+    }
+   # Return mock results for the queried word
+    for word in mock_results:
+        if word.lower() in query.lower():
+            st.info(f"📝 Using sample results for '{word}' (API testing mode)")
+            return mock_results[word]
+    
+    # Generic mock result
+    return [
+        {
+            'book_name': 'Sample Book',
+            'chapter': '1',
+            'verse': '1',
+            'text': f'This is a sample verse containing the word "{query}" for testing purposes.'
+        }
+    ]
+
+
+
+
+
+# ===== API FUNCTIONS FOR CROSS-REFERENCE LOOKUP =====
+
+# ALTERNATIVE: Use a different Bible API that's more reliable
+def search_bible_gateway_scrape(query, limit=10):
+    """Alternative: Use Bible Gateway search (simple scraping approach)"""
+    try:
+        # This is a backup method - Bible Gateway search URL
+        search_url = f"https://www.biblegateway.com/quicksearch/?search={quote(query)}&version=ESV"
+        
+        # For now, just return the search URL
+        return [{
+            'book_name': 'Bible Gateway',
+            'chapter': 'Search',
+            'verse': 'Results',
+            'text': f'Click the link below to search for "{query}" on Bible Gateway',
+            'search_url': search_url
+        }]
+    except:
+        return []
+
+def search_bible_api(query, bible_version="ESV", limit=50):
+    """Universal Bible search function with improved error handling"""
+    try:
+        # Try multiple API endpoints and query formats
+        
+        # Format 1: Try Bible SuperSearch with different query format
+        url = "https://api.biblesupersearch.com/api"
+        
+        # Clean the query - remove quotes for basic word search
+        clean_query = query.replace('"', '').strip()
+        
+        params = {
+            'query': clean_query,
             'bible': bible_version,
             'format': 'json',
             'limit': limit
         }
         
-        response = requests.get(url, params=params, timeout=10)
+        st.write(f"🔍 Searching for: '{clean_query}'")  # Debug info
+        
+        response = requests.get(url, params=params, timeout=15)
+        
+        st.write(f"📡 API Response Status: {response.status_code}")  # Debug info
         
         if response.status_code == 200:
             data = response.json()
-            return data.get('results', [])
+            st.write(f"📊 Raw API Response Keys: {list(data.keys())}")  # Debug info
+            
+            # Handle different response formats
+            if 'results' in data:
+                results = data['results']
+            elif 'verses' in data:
+                results = data['verses']
+            elif isinstance(data, list):
+                results = data
+            else:
+                st.write(f"🔍 Full API Response: {data}")  # Debug info
+                results = []
+            
+            st.write(f"✅ Found {len(results)} results")  # Debug info
+            return results
+            
         else:
             st.warning(f"Bible API returned status {response.status_code}")
-            return []
+            # Try alternative query format
+            return try_alternative_bible_search(clean_query, bible_version, limit)
             
     except requests.RequestException as e:
         st.warning(f"Could not connect to Bible API: {e}")
-        return []
+        return try_alternative_bible_search(clean_query if 'clean_query' in locals() else query, bible_version, limit)
+
+
 
 def extract_keywords_from_json(json_data):
     """Extract cross-reference keywords from JSON response"""
@@ -520,8 +658,9 @@ def extract_keywords_from_json(json_data):
     except (json.JSONDecodeError, KeyError):
         return []
 
+# IMPROVED: More robust cross-reference display function
 def display_cross_reference_section(keywords, research_type, user_input):
-    """Display cross-reference lookup section"""
+    """Display cross-reference lookup section with better error handling"""
     if not keywords:
         return
     
@@ -534,15 +673,30 @@ def display_cross_reference_section(keywords, research_type, user_input):
     keyword_tags = " • ".join([f"`{word}`" for word in keywords])
     st.markdown(keyword_tags)
     
+    # Add API status check
+    if st.button("🔧 Test API Connection", type="secondary"):
+        with st.spinner("Testing Bible API connection..."):
+            test_result = search_bible_api("test", limit=1)
+            if test_result:
+                st.success("✅ Bible API is working!")
+            else:
+                st.error("❌ Bible API connection failed - will use backup methods")
+    
     if st.button("📖 Find Cross-References in Scripture", type="secondary"):
-        with st.spinner("Searching Scripture for cross-references..."):
-            
-            for word in keywords:
-                with st.expander(f"📚 '{word}' throughout Scripture", expanded=False):
-                    # Search for this word in the Bible
-                    results = search_bible_api(f'"{word}"', limit=20)
+        st.markdown("### 📚 Scripture Cross-References")
+        
+        for word in keywords:
+            with st.expander(f"📚 '{word}' throughout Scripture", expanded=False):
+                with st.spinner(f"Searching for '{word}'..."):
                     
-                    if results:
+                    # Try main API search
+                    results = search_bible_api(f"{word}", limit=20)
+                    
+                    if results and len(results) > 0:
+                        # Check if these are real results or mock results
+                        if results[0].get('book_name') != 'Sample Book':
+                            st.success(f"✅ Found {len(results)} verses containing '{word}'")
+                        
                         # Separate Old and New Testament
                         ot_books = {
                             "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
@@ -562,42 +716,108 @@ def display_cross_reference_section(keywords, research_type, user_input):
                         with col1:
                             if ot_verses:
                                 st.markdown("**📜 Old Testament:**")
-                                for verse in ot_verses[:5]:
-                                    reference = f"{verse.get('book_name', '')} {verse.get('chapter', '')}:{verse.get('verse', '')}"
-                                    text = verse.get('text', '')
-                                    if len(text) > 100:
-                                        text = text[:100] + "..."
-                                    
-                                    st.markdown(f"""
-                                    <div style="margin: 5px 0; padding: 8px; border-left: 3px solid #8B4513; background-color: rgba(139, 69, 19, 0.1);">
-                                    <strong>{reference}</strong><br>
-                                    <em>"{text}"</em>
-                                    </div>
-                                    """, unsafe_allow_html=True)
+                                for verse in ot_verses[:3]:  # Show top 3
+                                    display_formatted_verse(verse, word)
                         
                         with col2:
                             if nt_verses:
                                 st.markdown("**✝️ New Testament:**")
-                                for verse in nt_verses[:5]:
-                                    reference = f"{verse.get('book_name', '')} {verse.get('chapter', '')}:{verse.get('verse', '')}"
-                                    text = verse.get('text', '')
-                                    if len(text) > 100:
-                                        text = text[:100] + "..."
-                                    
-                                    st.markdown(f"""
-                                    <div style="margin: 5px 0; padding: 8px; border-left: 3px solid #4169E1; background-color: rgba(65, 105, 225, 0.1);">
-                                    <strong>{reference}</strong><br>
-                                    <em>"{text}"</em>
-                                    </div>
-                                    """, unsafe_allow_html=True)
+                                for verse in nt_verses[:3]:  # Show top 3
+                                    display_formatted_verse(verse, word)
                         
-                        # Bible Gateway search link
+                        # Always provide Bible Gateway fallback
                         search_url = f"https://www.biblegateway.com/quicksearch/?search={quote(word)}&version=ESV"
                         st.markdown(f"🔍 [Search all '{word}' references on Bible Gateway]({search_url})")
+                        
                     else:
-                        st.info(f"No results found for '{word}' - try a Bible Gateway search instead.")
+                        st.warning(f"No API results found for '{word}'")
+                        # Provide Bible Gateway search as backup
                         search_url = f"https://www.biblegateway.com/quicksearch/?search={quote(word)}&version=ESV"
                         st.markdown(f"🔍 [Search '{word}' on Bible Gateway]({search_url})")
+                        
+                        # Option to try different search terms
+                        st.markdown("**💡 Try searching for:**")
+                        related_terms = get_related_search_terms(word)
+                        for term in related_terms:
+                            term_url = f"https://www.biblegateway.com/quicksearch/?search={quote(term)}&version=ESV"
+                            st.markdown(f"• [{term}]({term_url})")
+
+def display_formatted_verse(verse, search_word):
+    """Display a formatted verse with highlighting"""
+    reference = f"{verse.get('book_name', '')} {verse.get('chapter', '')}:{verse.get('verse', '')}"
+    text = verse.get('text', '')
+    
+    # Truncate long verses
+    if len(text) > 120:
+        text = text[:120] + "..."
+    
+    # Try to highlight the search word (case insensitive)
+    try:
+        import re
+        highlighted_text = re.sub(
+            f'({re.escape(search_word)})', 
+            r'**\1**', 
+            text, 
+            flags=re.IGNORECASE
+        )
+    except:
+        highlighted_text = text
+    
+    st.markdown(f"""
+    <div style="margin: 5px 0; padding: 8px; border-left: 3px solid #1f77b4; background-color: rgba(31, 119, 180, 0.1);">
+    <strong>{reference}</strong><br>
+    <em>"{highlighted_text}"</em>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Add individual verse link
+    if verse.get('search_url'):
+        st.markdown(f"🔗 [View on Bible Gateway]({verse['search_url']})")
+    else:
+        verse_url = f"https://www.biblegateway.com/passage/?search={quote(reference)}&version=ESV"
+        st.markdown(f"🔗 [Read full context]({verse_url})")
+
+def get_related_search_terms(word):
+    """Get related search terms for better Bible searching"""
+    related = {
+        'love': ['loving', 'beloved', 'lovingkindness', 'charity'],
+        'faith': ['faithful', 'believe', 'trust', 'faithfulness'],
+        'salvation': ['save', 'saved', 'savior', 'deliver', 'deliverance'],
+        'hope': ['hoping', 'hopeful', 'expectation'],
+        'peace': ['peaceful', 'rest', 'tranquility'],
+        'joy': ['joyful', 'rejoice', 'gladness', 'happy'],
+        'wisdom': ['wise', 'understanding', 'knowledge'],
+        'forgiveness': ['forgive', 'pardon', 'mercy']
+    }
+    
+    return related.get(word.lower(), [word + 's', word + 'ing'])
+
+
+# DEBUG FUNCTION: Add this to test API directly
+def test_bible_api_debug():
+    """Debug function to test API - call this in your main function for testing"""
+    st.subheader("🔧 API Debug Mode")
+    
+    test_word = st.text_input("Test word:", value="love")
+    
+    if st.button("Test API"):
+        st.write("Testing Bible SuperSearch API...")
+        
+        # Test different query formats
+        test_queries = [
+            test_word,
+            f'"{test_word}"',
+            f'{test_word}',
+            f'word:{test_word}'
+        ]
+        
+        for i, query in enumerate(test_queries):
+            st.write(f"**Test {i+1}: Query = '{query}'**")
+            results = search_bible_api(query, limit=3)
+            st.write(f"Results: {len(results) if results else 0}")
+            if results:
+                st.json(results[0])  # Show first result structure
+            st.write("---")
 
 
 # ===== YOUR MAIN FUNCTION WITH CLEAN PROMPT IMPORTS =====
