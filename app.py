@@ -8,6 +8,14 @@ import pandas as pd
 import requests
 from urllib.parse import quote
 
+# Initialize session state
+if 'results' not in st.session_state:
+    st.session_state.results = None
+if 'total_cost' not in st.session_state:
+    st.session_state.total_cost = 0.0
+if 'request_count' not in st.session_state:
+    st.session_state.request_count = 0
+
 # Import ALL prompts from consolidated prompts.py
 try:
     from utils.prompts import get_research_prompt, get_verse_enhancement_prompt, get_system_message
