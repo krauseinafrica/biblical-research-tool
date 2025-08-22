@@ -48,7 +48,7 @@ def load_bible_word_data():
         return {}, {}, {}
 
 
-parse_and_display_json_results(json_text: str):
+def parse_and_display_json_results(json_text: str):
     """Parse JSON results and display them in formatted containers"""
     try:
         import json
